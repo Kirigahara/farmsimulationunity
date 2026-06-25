@@ -1,0 +1,20 @@
+{
+    "name": "GameTemplate.Editor",
+    "rootNamespace": "GameTemplate.Editor",
+    "references": [
+        "GameTemplate.Core",
+        "GameTemplate.Gameplay",
+        "UnityEditor.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

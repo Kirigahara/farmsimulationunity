@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unity Game Template - Documentation</title>
+
+<!-- Load 100% local từ vendors/ (không cần internet) -->
+<script src="vendors/marked.min.js"></script>
+<script src="vendors/mermaid.min.js"></script>
+<script src="vendors/highlight.min.js"></script>
+<link rel="stylesheet" href="vendors/github-dark.min.css">
+
+<style>
+  /* Dark theme - GitHub Dark style */
+  :root {
+    --bg: #0d1117;
+    --bg-side: #161b22;
+    --bg-code: #161b22;
+    --bg-toolbar: #010409;
+    --text: #e6edf3;
+    --text-mute: #7d8590;
+    --border: #30363d;
+    --link: #2f81f7;
+    --accent: #2f81f7;
+    --table-row: #161b22;
+    --search-highlight: #ffd33d;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== Sidebar ===== */
+  #sidebar {
+    width: 260px;
+    background: var(--bg-side);
+    border-right: 1px solid var(--border);
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  #sidebar h1 {
+    font-size: 16px;
+    margin: 0 0 4px;
+    color: var(--text);
+  }
+  #sidebar .subtitle {
+    font-size: 12px;
+    color: var(--text-mute);
+    margin-bottom: 16px;
+  }
+  #sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  #sidebar li {
+    margin: 2px 0;
+  }
+  #sidebar a {
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  #sidebar a:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  #sidebar a.active {
+    background: var(--accent);
+    color: white;
+    font-weight: 500;
+  }
+  #sidebar .group-label {
+    font-size: 11px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 16px 0 4px 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== Main content ===== */
+  main {
+    flex: 1;
+    max-width: 980px;
+    padding: 32px 48px;
+    overflow-x: auto;
+  }
+  #content {
+    min-height: 80vh;
+  }
+
+  /* GitHub-style markdown */
+  #content h1, #content h2, #content h3, #content h4 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+    /* Offset cho toolbar sticky - khi nhảy tới heading, không bị che */
+    scroll-margin-top: 80px;
+  }
+  #content h1 {
+    font-size: 2em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--border);
+  }
+  #content h2 {
+    font-size: 1.5em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--border);
+  }
+  #content h3 { font-size: 1.25em; }
+  #content h4 { font-size: 1em; }
+
+  #content p { margin: 12px 0; }
+  #content a { color: var(--link); text-decoration: none; }
+  #content a:hover { text-decoration: underline; }
+
+  #content code {
+    background: var(--bg-code);
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+    font-size: 85%;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  }
+  #content pre {
+    background: var(--bg-code);
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.45;
+    border: 1px solid var(--border);
+  }
+  #content pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 100%;
+  }
+
+  #content blockquote {
+    margin: 12px 0;
+    padding: 0 1em;
+    color: var(--text-mute);
+    border-left: 0.25em solid var(--border);
+  }
+
+  #content table {
+    border-collapse: collapse;
+    margin: 16px 0;
+    display: block;
+    overflow-x: auto;
+  }
+  #content table th, #content table td {
+    border: 1px solid var(--border);
+    padding: 6px 13px;
+  }
+  #content table th {
+    background: var(--bg-side);
+    font-weight: 600;
+  }
+  #content table tr:nth-child(2n) {
+    background: var(--table-row);
+  }
+
+  #content ul, #content ol {
+    padding-left: 2em;
+    margin: 12px 0;
+  }
+  #content li { margin: 4px 0; }
+
+  #content hr {
+    border: 0;
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  #content img { max-width: 100%; }
+
+  /* Mermaid diagram */
+  .mermaid {
+    text-align: center;
+    margin: 24px 0;
+    background: var(--bg-side);
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  /* Mermaid SVG text màu sáng hơn cho dễ đọc trên dark */
+  .mermaid svg { max-width: 100%; }
+  .mermaid .nodeLabel, .mermaid .edgeLabel, .mermaid text {
+    color: var(--text);
+  }
+
+  /* ===== Toolbar (top) ===== */
+  #toolbar {
+    position: sticky;
+    top: 0;
+    background: var(--bg-toolbar);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 48px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+    margin: -32px -48px 24px;
+  }
+  #search {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-side);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+  }
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--text-mute); }
+
+  .search-hit {
+    background: var(--search-highlight);
+    color: #000;
+    padding: 1px 2px;
+    border-radius: 2px;
+  }
+
+  /* ===== Empty state ===== */
+  .empty {
+    color: var(--text-mute);
+    padding: 60px 40px;
+    text-align: center;
+  }
+  .empty h3 {
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    #sidebar { width: 100%; height: auto; position: relative; }
+    main { padding: 16px; }
+    #toolbar { padding: 12px 16px; margin: -16px -16px 16px; }
+  }
+
+  /* Scrollbar styling for dark */
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+  ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <h1>🎮 Game Template</h1>
+  <div class="subtitle">Documentation v1.0</div>
+  <ul id="nav"></ul>
+</aside>
+
+<main>
+  <div id="toolbar">
+    <input id="search" placeholder="🔍 Search trong tài liệu hiện tại..." />
+  </div>
+  <article id="content">
+    <div class="empty">
+      <h3>👈 Chọn 1 tài liệu từ sidebar bên trái</h3>
+      <p>Recommend bắt đầu với <strong>Cookbook</strong> nếu mới vào dự án.</p>
+    </div>
+  </article>
+</main>
+
+<script>
+  // ==================== Configuration ====================
+  // Sửa array này để thêm/bớt doc, đổi nhóm
+  const docs = [
+    { group: "🚀 Bắt đầu", items: [
+      { label: "📖 Cookbook (recipes)", file: "COOKBOOK.md" },
+      { label: "🎓 Onboarding", file: "ONBOARDING.md" },
+      { label: "📊 Diagrams", file: "DIAGRAMS.md" },
+    ]},
+    { group: "📚 Reference", items: [
+      { label: "🔍 API Reference", file: "API_REFERENCE.md" },
+      { label: "🏗 Architecture", file: "ARCHITECTURE.md" },
+      { label: "🎨 Patterns", file: "PATTERNS.md" },
+      { label: "💡 Example: MVP + Singleton", file: "EXAMPLE_MVP_SINGLETON.md" },
+    ]},
+    { group: "⚙️ Setup & Build", items: [
+      { label: "📱 Mobile Integration", file: "MOBILE_INTEGRATION.md" },
+      { label: "💰 AppLovin MAX Setup", file: "APPLOVIN_SETUP.md" },
+      { label: "🔧 Editor Tools", file: "EDITOR_TOOLS.md" },
+      { label: "📝 Coding Standards", file: "CODING_STANDARDS.md" },
+      { label: "✅ Build Checklist", file: "BUILD_CHECKLIST.md" },
+    ]},
+  ];
+
+  // ==================== Markdown content (build script inject vào đây) ====================
+  const MARKDOWN_CONTENT = window.__MARKDOWN_CONTENT__ || {};
+
+  // ==================== Init libraries ====================
+  // Custom renderer: tự sinh id cho heading (khớp với GitHub algorithm)
+  //
+  // Thuật toán slugify của GitHub (verify với source code Jekyll/Gollum):
+  //   1. Lowercase
+  //   2. Bỏ HTML tags
+  //   3. Bỏ ký tự đặc biệt (chấm, ngoặc, slash, +, etc.) - KHÔNG thay bằng dash
+  //   4. Space (khoảng trắng) -> dash
+  //   5. KHÔNG gộp dash liên tiếp
+  //   6. KHÔNG trim dash đầu/cuối
+  //
+  // Vd: "2b. Bật/tắt âm thanh (mute on/off) - không cần slider"
+  //   → bỏ chấm, slash, ngoặc → "2b bậttắt âm thanh mute onoff - không cần slider"
+  //   → space→dash → "2b-bậttắt-âm-thanh-mute-onoff---không-cần-slider"
+  //   (3 dash giữa "onoff" và "không" vì space-dash-space)
+  function slugify(text) {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      // Bỏ HTML tags nếu có
+      .replace(/<[^>]+>/g, '')
+      // Bỏ ký tự đặc biệt: KHÔNG thay bằng dash, chỉ xóa.
+      // Giữ: letter (unicode), digit, space, dash, underscore
+      .replace(/[^\p{L}\p{N}\s\-_]/gu, '')
+      // Space -> dash (sau bước xóa ký tự đặc biệt)
+      .replace(/\s/g, '-');
+    // KHÔNG gộp dash liên tiếp - GitHub giữ nguyên
+    // KHÔNG trim dash đầu/cuối
+  }
+
+  const renderer = new marked.Renderer();
+  renderer.heading = function(text, level) {
+    const slug = slugify(text);
+    return `<h${level} id="${slug}">${text}</h${level}>\n`;
+  };
+
+  marked.setOptions({
+    renderer: renderer,
+    highlight: function(code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        try { return hljs.highlight(code, { language: lang }).value; }
+        catch (e) {}
+      }
+      return hljs.highlightAuto(code).value;
+    },
+    breaks: false,
+    gfm: true,
+  });
+
+  // Mermaid dark theme để khớp với UI
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      background: '#161b22',
+      primaryColor: '#1f6feb',
+      primaryTextColor: '#e6edf3',
+      primaryBorderColor: '#30363d',
+      lineColor: '#7d8590',
+      secondaryColor: '#21262d',
+      tertiaryColor: '#161b22',
+    }
+  });
+
+  // ==================== Build sidebar ====================
+  function buildSidebar() {
+    const nav = document.getElementById("nav");
+    docs.forEach(group => {
+      const groupLabel = document.createElement("div");
+      groupLabel.className = "group-label";
+      groupLabel.textContent = group.group;
+      nav.appendChild(groupLabel);
+
+      group.items.forEach(item => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.textContent = item.label;
+        a.dataset.file = item.file;
+        a.onclick = () => loadDoc(item.file);
+        li.appendChild(a);
+        nav.appendChild(li);
+      });
+    });
+  }
+
+  // ==================== Load + render markdown ====================
+  function loadDoc(fileName) {
+    document.querySelectorAll("#nav a").forEach(a => a.classList.remove("active"));
+    const active = document.querySelector(`#nav a[data-file="${fileName}"]`);
+    if (active) active.classList.add("active");
+
+    const content = document.getElementById("content");
+    const markdown = MARKDOWN_CONTENT[fileName];
+
+    if (!markdown) {
+      content.innerHTML = `
+        <div class="empty">
+          <h3>⚠️ Không tải được "${fileName}"</h3>
+          <p>File chưa được build hoặc tên file không khớp.</p>
+          <p>Trong Unity: <code>GameTemplate → Documentation → 🔨 Rebuild HTML Viewer</code></p>
+        </div>`;
+      return;
+    }
+
+    // Render markdown → HTML
+    content.innerHTML = marked.parse(markdown);
+
+    // Convert mermaid code blocks → mermaid div
+    const mermaidBlocks = content.querySelectorAll("code.language-mermaid");
+    mermaidBlocks.forEach((block, idx) => {
+      const pre = block.parentElement;
+      const div = document.createElement("div");
+      div.className = "mermaid";
+      div.id = `mermaid-${Date.now()}-${idx}`;
+      div.textContent = block.textContent;
+      pre.replaceWith(div);
+    });
+
+    // Render mermaid
+    try {
+      mermaid.run({ querySelector: ".mermaid" });
+    } catch (e) {
+      console.warn("Mermaid render error:", e);
+    }
+
+    // Highlight code blocks (cho block không có lang hint)
+    content.querySelectorAll("pre code").forEach(block => {
+      if (!block.classList.contains("hljs")) {
+        hljs.highlightElement(block);
+      }
+    });
+
+    // Intercept click vào anchor link nội bộ (#section) trong content
+    // → smooth scroll thay vì để browser nhảy thô + bị che bởi toolbar sticky
+    content.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (!href || href === '#') return;
+        const targetId = decodeURIComponent(href.slice(1));
+        const target = document.getElementById(targetId);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Highlight target ngắn để user biết đã nhảy đến đâu
+          target.style.transition = 'background 0.3s';
+          target.style.background = 'rgba(47, 129, 247, 0.2)';
+          setTimeout(() => target.style.background = '', 1500);
+        } else {
+          console.warn(`[Docs] Không tìm thấy anchor: #${targetId}`);
+        }
+      });
+    });
+
+    // Scroll to top khi load doc mới (hoặc đến anchor nếu có trong URL hash)
+    const hashParts = location.hash.slice(1).split('?');
+    if (hashParts.length > 1) {
+      // URL có dạng #FILE.md?anchor-name → scroll tới anchor
+      const anchor = hashParts[1];
+      const target = document.getElementById(decodeURIComponent(anchor));
+      if (target) {
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+      } else {
+        window.scrollTo(0, 0);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    // Update URL hash để refresh nhớ vị trí
+    history.replaceState(null, "", "#" + fileName);
+
+    // Reset search nếu có
+    document.getElementById("search").value = "";
+  }
+
+  // ==================== Search ====================
+  document.getElementById("search").addEventListener("input", e => {
+    const keyword = e.target.value.toLowerCase().trim();
+    const content = document.getElementById("content");
+
+    // Reset highlight cũ
+    content.querySelectorAll(".search-hit").forEach(el => {
+      const text = document.createTextNode(el.textContent);
+      el.replaceWith(text);
+    });
+
+    if (keyword.length < 2) return;
+
+    // Walk text nodes, highlight match
+    const walker = document.createTreeWalker(
+      content,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: node => {
+          // Bỏ qua script, style, mermaid SVG nội bộ
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          const tag = parent.tagName.toLowerCase();
+          if (['script', 'style'].includes(tag)) return NodeFilter.FILTER_REJECT;
+          if (parent.closest('.mermaid')) return NodeFilter.FILTER_REJECT;
+          if (!node.textContent.toLowerCase().includes(keyword)) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    const matches = [];
+    let node;
+    while (node = walker.nextNode()) matches.push(node);
+
+    matches.forEach(textNode => {
+      const text = textNode.textContent;
+      const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      const span = document.createElement('span');
+      span.innerHTML = text.replace(regex, '<mark class="search-hit">$1</mark>');
+      textNode.replaceWith(...span.childNodes);
+    });
+
+    // Jump to first match
+    const first = content.querySelector(".search-hit");
+    if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  // ==================== Init ====================
+  buildSidebar();
+
+  // Auto load từ URL hash hoặc default Cookbook
+  const hashFile = location.hash.slice(1);
+  if (hashFile && MARKDOWN_CONTENT[hashFile]) {
+    loadDoc(hashFile);
+  } else if (MARKDOWN_CONTENT["COOKBOOK.md"]) {
+    loadDoc("COOKBOOK.md");
+  }
+</script>
+</body>
+</html>
