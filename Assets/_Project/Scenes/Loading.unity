@@ -576,7 +576,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameTemplate.Core::GameTemplate.Core.LoadingScene
   _slider: {fileID: 826954879}
   _minLoadingSeconds: 4
-  _nextSceneName: MainMenu
+  _nextSceneName: Gameplay
 --- !u!1 &826954877
 GameObject:
   m_ObjectHideFlags: 0
