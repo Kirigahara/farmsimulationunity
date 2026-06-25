@@ -18,15 +18,19 @@ namespace GameTemplate.Editor.QualityOfLife
         public static void OpenMainMenu()
             => OpenScene("Assets/_Project/Scenes/MainMenu.unity");
 
-        [MenuItem("GameTemplate/Open/Build Settings", priority = 32)]
+        [MenuItem("GameTemplate/Open/Loading Scene", priority = 32)]
+        public static void OpenLoading()
+            => OpenScene("Assets/_Project/Scenes/Loading.unity");
+
+        [MenuItem("GameTemplate/Open/Build Settings", priority = 33)]
         public static void OpenBuildSettings()
             => EditorWindow.GetWindow(System.Type.GetType("UnityEditor.BuildPlayerWindow,UnityEditor"));
 
-        [MenuItem("GameTemplate/Open/Player Settings", priority = 33)]
+        [MenuItem("GameTemplate/Open/Player Settings", priority = 34)]
         public static void OpenPlayerSettings()
             => SettingsService.OpenProjectSettings("Project/Player");
 
-        [MenuItem("GameTemplate/Open/Quality Settings", priority = 34)]
+        [MenuItem("GameTemplate/Open/Quality Settings", priority = 35)]
         public static void OpenQualitySettings()
             => SettingsService.OpenProjectSettings("Project/Quality");
 
