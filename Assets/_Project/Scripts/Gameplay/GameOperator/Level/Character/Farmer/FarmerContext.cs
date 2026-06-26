@@ -1,26 +1,36 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
 {
-    public class GuestContext
+    public class FarmerContext
     {
         // ── Dependencies ──────────────────────────────────────────────────
         public readonly PathFinding PathfindingService;
         public readonly CharacterStateMachine StateMachine;
+        public readonly ContructionController ContructionBehavior;
+        public readonly LevelController LevelController;
 
         // ── Vị trí động ───────────────────────────────────────────────────
-        public Func<Vector3> CounterPosition;
-        public Func<Vector3> DespawnPosition;
+        public Func<Vector3> TreePosition;
+        public Func<Vector3> GuestPosition;
 
-        // ── Data ──────────────────────────────────────────────────────────
-        public ContructionController ItemToBuy { get; set; }
+        // ── Data runtime ──────────────────────────────────────────────────
+        public GuestBehavior CurrentGuest { get; set; }
+        public Transform[] FetchedItems { get; set; }
 
         // ─────────────────────────────────────────────────────────────────
-        public GuestContext(PathFinding pathfindingService, CharacterStateMachine stateMachine)
+        public FarmerContext(
+            PathFinding pathfindingService,
+            CharacterStateMachine stateMachine,
+            ContructionController treeBehavior,
+            LevelController levelController)
         {
             PathfindingService = pathfindingService;
             StateMachine       = stateMachine;
+            ContructionBehavior = treeBehavior;
+            LevelController    = levelController;
         }
     }
 }

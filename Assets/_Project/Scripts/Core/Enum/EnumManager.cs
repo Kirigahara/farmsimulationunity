@@ -9,5 +9,13 @@ namespace GameTemplate.Core
             Random = 0,
             Straight = 1,
         }
+
+        public enum ProductType
+        {
+            Tomato = 0,
+            Orange = 1,
+            Corn = 2,
+            Grape = 3,
+        }
     }
 }

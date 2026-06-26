@@ -18,18 +18,28 @@ namespace GameTemplate.Gameplay
         // ─────────────────────────────────────────────────────────────────
         void Awake()
         {
-            _stateMachine = new CharacterStateMachine();
-
-            _context = new GuestContext(_pathfindingService, _stateMachine)
-            {
-                CounterPosition  = () => _counterTransform.position,
-                DespawnPosition  = () => _despawnTransform.position,
-                ItemToBuy        = DecideItem()
-            };
+            //_stateMachine = new CharacterStateMachine();
         }
 
         void Start()
         {
+            
+        }
+
+        public void SetupItem(
+            PathFinding pathfindingService, 
+            CharacterStateMachine stateMachine,
+            ContructionController contruction)
+        {
+            _stateMachine = new CharacterStateMachine();
+
+            _context = new GuestContext(_pathfindingService, _stateMachine)
+            {
+                CounterPosition = () => _counterTransform.position,
+                DespawnPosition = () => _despawnTransform.position,
+                ItemToBuy = contruction,
+            };
+
             _stateMachine.ChangeState(new MoveToCounterState(_context));
         }
 
@@ -44,6 +54,8 @@ namespace GameTemplate.Gameplay
             // CharacterController gọi hàm này khi tới quầy
             // BuyingState đã được chuyển tự động qua pathfinding callback
             // Hàm này có thể dùng để trigger animation hoặc sound
+
+            _context.ItemToBuy.CallFarmer();
         }
 
         // ── Public API cho Farmer gọi khi deliver xong ───────────────────
