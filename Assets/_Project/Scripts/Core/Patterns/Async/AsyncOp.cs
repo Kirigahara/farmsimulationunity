@@ -87,6 +87,66 @@ namespace GameTemplate.Core.Patterns.Async
             onUpdate?.Invoke(to); // đảm bảo final value chính xác
         }
 
+        /// <summary>Tween float từ from -> to trong duration giây, gọi onUpdate mỗi frame, gọi onComplete khi kết thúc.</summary>
+        public static async Task Tween(
+            float from, float to, float duration,
+            Action<float> onUpdate, Action onComplete,
+            AnimationCurve curve = null)
+        {
+            await Tween(from, to, duration, onUpdate, curve);
+            onComplete?.Invoke();
+        }
+
+        /// <summary>
+        /// Tween vector3 từ from -> to trong duration giây, gọi onUpdate mỗi frame, gọi onComplete khi kết thúc
+        /// </summary>
+        public static async Task MoveTween(
+            Vector3 from, Vector3 to, float duration,
+            Action<Vector3> onUpdate, Action onComplete,
+            AnimationCurve curve = null)
+        {
+            float t = 0f;
+            Vector3 offset = to - from;
+
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                float normalized = Mathf.Clamp01(t / duration);
+                float eased = curve != null ? curve.Evaluate(normalized) : normalized;
+                Vector3 pos = from + offset * eased;
+                onUpdate?.Invoke(pos);
+                await Task.Yield();
+            }
+
+            onComplete?.Invoke();
+        }
+
+        /// <summary>
+        /// Tween vector3 từ from -> to trong duration giây, gọi onUpdate mỗi frame, gọi onComplete khi kết thúc <\br>
+        /// Sử dụng khi đích đến là vật thể động, theo dấu vị trí của đích đến liên tục
+        /// </summary>
+        public static async Task MoveTween(
+            Vector3 from, Transform to, float duration,
+            Action<Vector3> onUpdate, Action onComplete,
+            AnimationCurve curve = null)
+        {
+            float t = 0f;
+            Vector3 offset = to.position - from;
+
+            while (t < duration)
+            {
+                offset = to.position - from;
+                t += Time.deltaTime;
+                float normalized = Mathf.Clamp01(t / duration);
+                float eased = curve != null ? curve.Evaluate(normalized) : normalized;
+                Vector3 pos = from + offset * eased;
+                onUpdate?.Invoke(pos);
+                await Task.Yield();
+            }
+
+            onComplete?.Invoke();
+        }
+
         /// <summary>
         /// Chạy nhiều task song song.
         /// Vd: await AsyncOp.WhenAll(fadeUI(), playMusic(), loadScene());

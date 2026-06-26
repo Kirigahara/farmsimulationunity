@@ -10,17 +10,21 @@ namespace GameTemplate.Editor.QualityOfLife
     /// </summary>
     public static class ProjectShortcuts
     {
-        [MenuItem("GameTemplate/Open/Bootstrap Scene", priority = 30)]
+        [MenuItem("GameTemplate/Open/Bootstrap Scene", priority = 0)]
         public static void OpenBootstrap()
             => OpenScene("Assets/_Project/Scenes/Bootstrap.unity");
 
-        [MenuItem("GameTemplate/Open/Main Menu Scene", priority = 31)]
+        [MenuItem("GameTemplate/Open/Main Menu Scene", priority = 1)]
         public static void OpenMainMenu()
             => OpenScene("Assets/_Project/Scenes/MainMenu.unity");
 
-        [MenuItem("GameTemplate/Open/Loading Scene", priority = 32)]
+        [MenuItem("GameTemplate/Open/Loading Scene", priority = 2)]
         public static void OpenLoading()
             => OpenScene("Assets/_Project/Scenes/Loading.unity");
+
+        [MenuItem("GameTemplate/Open/GamePlay Scene", priority = 3)]
+        public static void OpenGameplay()
+            => OpenScene("Assets/_Project/Scenes/Gameplay.unity");
 
         [MenuItem("GameTemplate/Open/Build Settings", priority = 33)]
         public static void OpenBuildSettings()
