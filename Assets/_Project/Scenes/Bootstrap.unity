@@ -189,6 +189,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1607138357}
   - component: {fileID: 1607138356}
+  - component: {fileID: 1607138358}
   - component: {fileID: 1607138355}
   m_Layer: 0
   m_Name: '[Managers]'
@@ -227,6 +228,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _audioManagerPrefab: {fileID: 1541879868099809073, guid: 252c31c6ae7d029459ecb98b9d1dd45c, type: 3}
   _uiManagerPrefab: {fileID: 8778907662455191470, guid: 4b46c4be5d1af714097dc273c39f24e3, type: 3}
+  _dataManagerPrefab: {fileID: 6926972832702180688, guid: ac7dae4cdcd891045abb10dd6d37168e, type: 3}
   _targetFrameRate: 60
   _multiTouchEnabled: 0
   _firstSceneName: Loading
@@ -245,6 +247,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1607138358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607138354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69b48b8405d57cc4aa6d3b58aaf2185c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameTemplate.Gameplay::GameTemplate.Gameplay.GameplayBootstrap
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

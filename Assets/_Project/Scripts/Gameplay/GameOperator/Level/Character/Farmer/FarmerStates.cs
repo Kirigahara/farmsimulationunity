@@ -72,10 +72,31 @@ namespace GameTemplate.Gameplay
         public void Enter()
         {
             Vector3 destination = _ctx.GuestPosition.Invoke();
-            _ctx.PathfindingService.FindPath(destination, OnReached);
+            //_ctx.PathfindingService.FindPath(destination, OnReached);
+
+            PathSmoother.FindPath(
+                _ctx.Coordinate.Invoke(),
+                _ctx.CurrentNode,
+                _ctx.FinishNode,
+                (path) => { _ctx.PathFollower.SetPath(path); });
         }
 
-        public void Execute() { }
+        public void Execute() 
+        {
+            if (_ctx.PathFollower.IsFinished)
+            {
+                _ctx.CurrentNode = _ctx.FinishNode;
+                OnReached();
+                return;
+            }
+
+            _ctx.UpdateRotation.Invoke(
+                Quaternion.LookRotation(_ctx.PathFollower.MoveDirection));
+            _ctx.UpdatePosition.Invoke(
+                _ctx.PathFollower.Tick(
+                    _ctx.Coordinate.Invoke(), 
+                    _ctx.Stat.MoveSpeed));
+        }
 
         public void Exit() { }
 
@@ -101,8 +122,10 @@ namespace GameTemplate.Gameplay
             _ctx.CurrentGuest.OnItemDelivered();
 
             // TODO: animation nhận tiền, sound...
-
             _ctx.StateMachine.ChangeState(new MoveToTreeState(_ctx));
+
+            // Remove khách sau khi trả tiền
+            _ctx.ContructionBehavior.RemoveGuest();
         }
 
         public void Execute() { }
@@ -123,10 +146,31 @@ namespace GameTemplate.Gameplay
         public void Enter()
         {
             Vector3 destination = _ctx.TreePosition.Invoke();
-            _ctx.PathfindingService.FindPath(destination, OnReached);
+
+            //_ctx.PathfindingService.FindPath(destination, OnReached);
+
+            PathSmoother.FindPath(
+                _ctx.Coordinate.Invoke(),
+                _ctx.CurrentNode,
+                _ctx.ContructionBehavior.StandFarmer,
+                (path) => { _ctx.PathFollower.SetPath(path); });
         }
 
-        public void Execute() { }
+        public void Execute() 
+        {
+            if (_ctx.PathFollower.IsFinished)
+            {
+                _ctx.CurrentNode = _ctx.FinishNode;
+                OnReached();
+                return;
+            }
+            _ctx.UpdateRotation.Invoke(
+                Quaternion.LookRotation(_ctx.PathFollower.MoveDirection));
+            _ctx.UpdatePosition.Invoke(
+                _ctx.PathFollower.Tick(
+                    _ctx.Coordinate.Invoke(),
+                    _ctx.Stat.MoveSpeed));
+        }
 
         public void Exit() { }
 
@@ -138,20 +182,27 @@ namespace GameTemplate.Gameplay
             _ctx.FetchedItems = null;
 
             // Hỏi LevelController xem có khách đang đợi không
-            GuestBehavior nextGuest = _ctx.ContructionBehavior.GetGuest();
+            //GuestBehavior nextGuest = _ctx.ContructionBehavior.GetGuest();
 
-            if (nextGuest != null)
-            {
-                // Có khách trong queue → phục vụ luôn, không cần qua WaitState
-                _ctx.CurrentGuest = nextGuest;
-                _ctx.GuestPosition = () => nextGuest.transform.position;
-                _ctx.StateMachine.ChangeState(new FetchFromTreeState(_ctx));
-            }
-            else
-            {
-                // Không có khách → về WaitState chờ LevelController push
-                _ctx.StateMachine.ChangeState(new WaitState(_ctx));
-            }
+            //if (nextGuest != null)
+            //{
+            //    // Có khách trong queue → phục vụ luôn, không cần qua WaitState
+            //    _ctx.CurrentGuest = nextGuest;
+            //    _ctx.GuestPosition = () => nextGuest.transform.position;
+            //    _ctx.StateMachine.ChangeState(new FetchFromTreeState(_ctx));
+            //}
+            //else
+            //{
+            //    // Không có khách → về WaitState chờ LevelController push
+            //    _ctx.StateMachine.ChangeState(new WaitState(_ctx));
+            //}
+
+            _ = _ctx.ContructionBehavior.CheckGuest(
+                () =>
+                {
+                    // Không có khách → về WaitState chờ LevelController push
+                    _ctx.StateMachine.ChangeState(new WaitState(_ctx));
+                });
         }
     }
 }

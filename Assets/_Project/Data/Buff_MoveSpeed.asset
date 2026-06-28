@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f202b94b3d00b5c42ac93666f7d4a330, type: 3}
+  m_Name: Buff_MoveSpeed
+  m_EditorClassIdentifier: GameTemplate.Gameplay::GameTemplate.Gameplay.Stats.BuffDefinition
+  _buffId: movespeed
+  _displayName: MoveSpeed
+  _icon: {fileID: 0}
+  _description: Increase Move Speed On 60s
+  _durationSeconds: 60
+  _stackable: 0
+  _maxStacks: 1
+  _refreshDurationOnMaxStack: 1
+  _hasStatModifiers: 0
+  _statModifiers: []
+  _hasTickEffect: 1
+  _tickInterval: 1
+  _tickDamage: 20
+  _hasTriggerEffect: 0
+  _triggerType: 0
+  _effect: 0
+  _effectValue: 5
+  _hpThresholdPercent: 30
+  _triggerCooldown: 0
+  _buffToApply: {fileID: 0}
+  _showOnHud: 1

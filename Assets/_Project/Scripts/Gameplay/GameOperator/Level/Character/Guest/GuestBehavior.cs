@@ -1,14 +1,16 @@
+using GameTemplate.Core.Patterns.Factory;
+using GameTemplate.Gameplay.Stats;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
 {
-    public class GuestBehavior : MonoBehaviour, ICharacterBehavior
+    public class GuestBehavior : ChatacterBehavior, ICharacterBehavior, IConfigurable<GuestData>
     {
         // ── Inspector ─────────────────────────────────────────────────────
         [Header("References")]
-        [SerializeField] private PathFinding _pathfindingService;
-        [SerializeField] private Transform _counterTransform;
-        [SerializeField] private Transform _despawnTransform;
+        private PathFollower _PathFollower;
+        private Transform _counterTransform;
+        private Transform _despawnTransform;
 
         // ── Runtime ───────────────────────────────────────────────────────
         private CharacterStateMachine _stateMachine;
@@ -16,6 +18,7 @@ namespace GameTemplate.Gameplay
         private BuyingState _buyingState;
 
         // ─────────────────────────────────────────────────────────────────
+
         void Awake()
         {
             //_stateMachine = new CharacterStateMachine();
@@ -26,18 +29,27 @@ namespace GameTemplate.Gameplay
             
         }
 
-        public void SetupItem(
-            PathFinding pathfindingService, 
+        public void Setup( 
             CharacterStateMachine stateMachine,
-            ContructionController contruction)
+            ContructionController contruction,
+            PathNode startNode, PathNode finishNode)
         {
+            Configure((GuestData)_DefaultData);
             _stateMachine = new CharacterStateMachine();
+            _PathFollower = new PathFollower();
 
-            _context = new GuestContext(_pathfindingService, _stateMachine)
+            _context = new GuestContext(_PathFollower, _stateMachine)
             {
                 CounterPosition = () => _counterTransform.position,
                 DespawnPosition = () => _despawnTransform.position,
+                Coordinate = () => this.transform.position,
+                UpdatePosition = UpdatePosition,
+                UpdateRotation = UpdateRotation,
+                OnReachedCounter = OnReachedCounter,
                 ItemToBuy = contruction,
+                Stat = _CharacterStat,
+                CurrentNode = startNode,
+                FinishNode = finishNode
             };
 
             _stateMachine.ChangeState(new MoveToCounterState(_context));
@@ -55,7 +67,7 @@ namespace GameTemplate.Gameplay
             // BuyingState đã được chuyển tự động qua pathfinding callback
             // Hàm này có thể dùng để trigger animation hoặc sound
 
-            _context.ItemToBuy.CallFarmer();
+            _ = _context.ItemToBuy.AddGuest(this);
         }
 
         // ── Public API cho Farmer gọi khi deliver xong ───────────────────
@@ -72,6 +84,22 @@ namespace GameTemplate.Gameplay
         {
             // Logic chọn item mua — mở rộng sau
             return "Apple";
+        }
+
+        //---Data & Buff---------------
+        public void Configure(GuestData data)
+        {
+            //_MoveSpeed = data.MoveSpeed;
+
+            _CharacterStat = new CharacterStat2
+            {
+                _MoveSpeed = data.MoveSpeed,
+            };
+        }
+
+        public void ApplyBuff(BuffDefinition buff)
+        {
+            _CharacterStat.BuffSet.Apply(buff);
         }
     }
 }

@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Level_1
+  m_EditorClassIdentifier: GameTemplate.Gameplay:GameTemplate.Gameplay:LevelConfig
+  ContructionDatas:
+  - {fileID: 11400000, guid: 0f887ee60319bfd4fae9e1bd99e6afa5, type: 2}
+  - {fileID: 11400000, guid: d70d386f93320cf41bf878e992d27b3f, type: 2}
+  - {fileID: 11400000, guid: 0bb6efc78f5e558408ccaee90b495f9e, type: 2}
+  - {fileID: 11400000, guid: 4e52f9732cc88a440833cd9b45fde477, type: 2}
+  PlantUpgrades:
+  - PlantId: 1
+    Levels:
+    - Cost: 0
+      Value: 1
+    - Cost: 1000
+      Value: 2
+    - Cost: 20000
+      Value: 3
+  - PlantId: 2
+    Levels:
+    - Cost: 0
+      Value: 1
+    - Cost: 2000
+      Value: 2
+    - Cost: 40000
+      Value: 3
+  - PlantId: 3
+    Levels:
+    - Cost: 0
+      Value: 1
+    - Cost: 3000
+      Value: 2
+    - Cost: 60000
+      Value: 3
+  - PlantId: 4
+    Levels:
+    - Cost: 0
+      Value: 1
+    - Cost: 4000
+      Value: 2
+    - Cost: 80000
+      Value: 3
+  GlobalPlantUpgrade:
+    Levels:
+    - Cost: 0
+      Value: 1
+    - Cost: 1000
+      Value: 1.5
+    - Cost: 2000
+      Value: 2
+    - Cost: 3000
+      Value: 2.5
+  CustomerUpgrade:
+    Levels:
+    - Cost: 0
+      Value: 1
+    - Cost: 1000
+      Value: 2
+    - Cost: 2000
+      Value: 3
+    - Cost: 3000
+      Value: 4
+  _PrefabLevel: {fileID: 0}

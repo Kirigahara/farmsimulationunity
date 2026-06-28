@@ -526,6 +526,28 @@ public class StaticFunction
         return (E.x, E.z);
     }
 
+    /// <summary>
+    /// Random 1 điểm trong hình chữ nhật trên mặt phẳng 2D.
+    /// Hình chữ nhật định nghĩa bởi tâm, độ dài đường chéo và góc nghiêng so với trục X.
+    /// </summary>
+    /// <param name="center">Tâm hình chữ nhật.</param>
+    /// <param name="diagonal">Độ dài đường chéo.</param>
+    /// <param name="angleRad">Góc tạo với trục X (radian). Dùng Mathf.Deg2Rad nếu có góc độ.</param>
+    public static (float, float) RandomPointInRectangle(
+        float centerX, float centerY, 
+        float diagonal, float angleRad)
+    {
+        // Tính half-width và half-height từ đường chéo và góc
+        float halfWidth = (diagonal / 2f) * Mathf.Cos(angleRad);
+        float halfHeight = (diagonal / 2f) * Mathf.Sin(angleRad);
+
+        // Random điểm trong hình chữ nhật ở local space (chưa xoay)
+        float localX = RandomFloat(-halfWidth, halfWidth);
+        float localY = RandomFloat(-halfHeight, halfHeight);
+
+        return(centerX + localX, centerY + localY);
+    }
+
     static int[] GetRandomUniqueIndices(int count, int maxExclusive)
     {
         if (count > maxExclusive)

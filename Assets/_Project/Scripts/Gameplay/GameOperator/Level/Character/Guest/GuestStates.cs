@@ -15,16 +15,35 @@ namespace GameTemplate.Gameplay
         public void Enter()
         {
             Vector3 destination = _ctx.CounterPosition.Invoke();
-
-            _ctx.PathfindingService.FindPath(destination, OnReached);
+            
+            PathSmoother.FindPath(
+                _ctx.Coordinate.Invoke(),
+                _ctx.CurrentNode,
+                _ctx.FinishNode, (path) => { _ctx.PathFollower.SetPath(path); });
         }
 
-        public void Execute() { }
+        public void Execute() 
+        {
+            if (_ctx.PathFollower.IsFinished)
+            {
+                _ctx.CurrentNode = _ctx.FinishNode;
+                OnReached();
+                return;
+            }
+
+            _ctx.UpdateRotation.Invoke(
+                Quaternion.LookRotation(_ctx.PathFollower.MoveDirection));
+            _ctx.UpdatePosition.Invoke(
+                _ctx.PathFollower.Tick(
+                    _ctx.Coordinate.Invoke(),
+                    _ctx.Stat.MoveSpeed));
+        }
 
         public void Exit() { }
 
         private void OnReached()
         {
+            _ctx.OnReachedCounter.Invoke();
             _ctx.StateMachine.ChangeState(new BuyingState(_ctx));
         }
     }
@@ -72,10 +91,29 @@ namespace GameTemplate.Gameplay
         {
             Vector3 destination = _ctx.DespawnPosition.Invoke();
 
-            _ctx.PathfindingService.FindPath(destination, OnReached);
+            PathSmoother.FindPath(
+                _ctx.Coordinate.Invoke(),
+                _ctx.CurrentNode,
+                GameplayManager.MainLevel.ExitGuestNode,
+                (path) => { _ctx.PathFollower.SetPath(path); });
         }
 
-        public void Execute() { }
+        public void Execute() 
+        {
+            if (_ctx.PathFollower.IsFinished)
+            {
+                _ctx.CurrentNode = _ctx.FinishNode;
+                OnReached();
+                return;
+            }
+
+            _ctx.UpdateRotation.Invoke(
+                Quaternion.LookRotation(_ctx.PathFollower.MoveDirection));
+            _ctx.UpdatePosition.Invoke(
+                _ctx.PathFollower.Tick(
+                    _ctx.Coordinate.Invoke(),
+                    _ctx.Stat.MoveSpeed));
+        }
 
         public void Exit() { }
 

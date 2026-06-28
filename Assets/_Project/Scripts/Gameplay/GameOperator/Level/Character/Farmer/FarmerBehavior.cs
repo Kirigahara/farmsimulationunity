@@ -1,14 +1,16 @@
+using GameTemplate.Core.Patterns.Factory;
+using GameTemplate.Gameplay.Stats;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
 {
-    public class FarmerBehavior : MonoBehaviour, ICharacterBehavior
+    public class FarmerBehavior : ChatacterBehavior, ICharacterBehavior, IConfigurable<FarmerData>
     {
         // ── Inspector ─────────────────────────────────────────────────────
         [Header("References")]
-        [SerializeField] private PathFinding _pathfindingService;
-        [SerializeField] private ContructionController _ContructionController;
-        [SerializeField] private LevelController _levelController;
+        private PathFollower _PathFollower;
+        private ContructionController _ContructionController;
+        private LevelController _levelController;
 
         // ── Runtime ───────────────────────────────────────────────────────
         private CharacterStateMachine _stateMachine;
@@ -16,6 +18,8 @@ namespace GameTemplate.Gameplay
         private WaitState _waitState;
 
         // ─────────────────────────────────────────────────────────────────
+        
+
         void Awake()
         {
             
@@ -29,15 +33,23 @@ namespace GameTemplate.Gameplay
 
         public void SetUp()
         {
+            Configure((FarmerData)_DefaultData);
             _stateMachine = new CharacterStateMachine();
+            _PathFollower = new PathFollower();
 
             _context = new FarmerContext(
-                _pathfindingService,
+                _PathFollower,
                 _stateMachine,
                 _ContructionController,
                 _levelController)
             {
-                TreePosition = () => _ContructionController.transform.position
+                Coordinate = () => this.transform.position,
+                TreePosition = () => _ContructionController.transform.position,
+                UpdatePosition = UpdatePosition,
+                UpdateRotation = UpdateRotation,
+                OnReachedCounter = OnReachedCounter,
+                Stat = _CharacterStat,
+                CurrentNode = _CurrentPathNode,
             };
 
             _waitState = new WaitState(_context);
@@ -69,6 +81,22 @@ namespace GameTemplate.Gameplay
                 waitState.StartServing(guest);
             else
                 Debug.LogWarning("[FarmerBehavior] ServeGuest gọi khi Farmer không ở WaitState!");
+        }
+
+        //---Data & Buff---------------
+        public void Configure(FarmerData data)
+        {
+            //_MoveSpeed = data.MoveSpeed;
+
+            _CharacterStat = new CharacterStat2
+            {
+                _MoveSpeed = data.MoveSpeed,
+            };
+        }
+
+        public void ApplyBuff(BuffDefinition buff)
+        {
+            _CharacterStat.BuffSet.Apply(buff);
         }
     }
 }

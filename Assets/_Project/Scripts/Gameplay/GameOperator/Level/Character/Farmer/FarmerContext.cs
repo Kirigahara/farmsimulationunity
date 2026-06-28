@@ -1,36 +1,34 @@
+using GameTemplate.Gameplay.Stats;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
 {
-    public class FarmerContext
+    public class FarmerContext : CharacterContext
     {
-        // ── Dependencies ──────────────────────────────────────────────────
-        public readonly PathFinding PathfindingService;
-        public readonly CharacterStateMachine StateMachine;
+        // ── Dependencies riêng ────────────────────────────────────────────
         public readonly ContructionController ContructionBehavior;
         public readonly LevelController LevelController;
 
-        // ── Vị trí động ───────────────────────────────────────────────────
+        // ── Vị trí động riêng ─────────────────────────────────────────────
         public Func<Vector3> TreePosition;
         public Func<Vector3> GuestPosition;
 
-        // ── Data runtime ──────────────────────────────────────────────────
+        // ── Data runtime riêng ────────────────────────────────────────────
         public GuestBehavior CurrentGuest { get; set; }
         public Transform[] FetchedItems { get; set; }
 
         // ─────────────────────────────────────────────────────────────────
         public FarmerContext(
-            PathFinding pathfindingService,
+            PathFollower pathFollower,
             CharacterStateMachine stateMachine,
-            ContructionController treeBehavior,
+            ContructionController contructionBehavior,
             LevelController levelController)
+            : base(pathFollower, stateMachine)
         {
-            PathfindingService = pathfindingService;
-            StateMachine       = stateMachine;
-            ContructionBehavior = treeBehavior;
-            LevelController    = levelController;
+            ContructionBehavior = contructionBehavior;
+            LevelController = levelController;
         }
     }
 }

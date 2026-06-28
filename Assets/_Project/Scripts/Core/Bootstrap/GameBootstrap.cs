@@ -6,6 +6,7 @@ using GameTemplate.Core.SceneManagement;
 using GameTemplate.Core.Audio;
 using GameTemplate.Core.UI;
 using GameTemplate.Core.Logger;
+using GameTemplate.Core.Data;
 
 namespace GameTemplate.Core.Bootstrap
 {
@@ -28,6 +29,7 @@ namespace GameTemplate.Core.Bootstrap
         [Header("Manager Prefabs")]
         [SerializeField] private AudioManager _audioManagerPrefab;
         [SerializeField] private UIManager _uiManagerPrefab;
+        [SerializeField] private DataManager _dataManagerPrefab;
 
         [Header("Mobile Settings")]
         [SerializeField] private int _targetFrameRate = 60;
@@ -79,6 +81,12 @@ namespace GameTemplate.Core.Bootstrap
                 ServiceLocator.Register(ui);
             }
 
+            // DataManager — register instance, không phải interface
+            if (_dataManagerPrefab != null)
+            {
+                var data = Instantiate(_dataManagerPrefab, transform);
+                ServiceLocator.Register(data);
+            }
             GameLog.Info(LogCategory.Bootstrap, "All services registered.");
         }
 

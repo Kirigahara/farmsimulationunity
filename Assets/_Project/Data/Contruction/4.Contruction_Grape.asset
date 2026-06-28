@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8748439351436488acdbc8dc186c80, type: 3}
+  m_Name: 4.Contruction_Grape
+  m_EditorClassIdentifier: Assembly-CSharp::ContructionData
+  Id: 4
+  _Cost: 80
+  _ProductPrefab: {fileID: 0}
+  _Levels:
+  - Cost: 8000
+    Value: 80
+  - Cost: 16000
+    Value: 160
+  - Cost: 80000
+    Value: 800
+  - Cost: 160000
+    Value: 1600

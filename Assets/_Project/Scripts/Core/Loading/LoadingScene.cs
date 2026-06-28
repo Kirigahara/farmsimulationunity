@@ -2,6 +2,7 @@ using GameTemplate.Core.DI;
 using GameTemplate.Core.Logger;
 using GameTemplate.Core.Patterns.Async;
 using GameTemplate.Core.SceneManagement;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Unity.Android.Gradle;
@@ -41,12 +42,14 @@ namespace GameTemplate.Core
         private CancellationTokenSource _cts;
 
         // ---------------------------------------------------------------
+        public static Func<Task> OnPreload;
 
         private void Start()
         {
             _sceneLoader = ServiceLocator.Get<ISceneLoader>();
 
             _cts = new CancellationTokenSource();
+
             _ = RunBootstrapAsync(_cts.Token);
         }
 
@@ -60,9 +63,21 @@ namespace GameTemplate.Core
         // Main flow
         // ---------------------------------------------------------------
 
+        private async Task PreloadLocalAssetsAsync(CancellationToken ct)
+        {
+            if (OnPreload != null)
+                await OnPreload.Invoke();
+        }
+
         private async Task RunBootstrapAsync(CancellationToken ct)
         {
             if (_slider != null) _slider.value = 0f;
+
+            //  Preload Local Data + chạy timer song song
+            await AsyncOp.WhenAll(
+                PreloadLocalAssetsAsync(ct),
+                RunTimerAsync(ct)
+            );
 
             // ① Preload AssetBundle + chạy timer song song
             //    Cả hai chạy cùng lúc — đợi cả hai xong mới tiếp tục.
@@ -81,7 +96,7 @@ namespace GameTemplate.Core
 
             if (ct.IsCancellationRequested) return;
 
-            // ④ Chuyển scene — dùng showLoading: false vì đang ở loading scene rồi
+            // ④ Chuyển scene
             GameLog.Info(LogCategory.Scene, $"[Bootstrap] Chuyển sang scene: {_nextSceneName}");
             await _sceneLoader.LoadSceneAsync(_nextSceneName, showLoading: false);
         }

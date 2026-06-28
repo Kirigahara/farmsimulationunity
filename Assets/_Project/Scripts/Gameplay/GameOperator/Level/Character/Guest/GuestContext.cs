@@ -1,26 +1,20 @@
+using GameTemplate.Gameplay.Stats;
 using System;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
 {
-    public class GuestContext
+    public class GuestContext : CharacterContext
     {
-        // ── Dependencies ──────────────────────────────────────────────────
-        public readonly PathFinding PathfindingService;
-        public readonly CharacterStateMachine StateMachine;
-
-        // ── Vị trí động ───────────────────────────────────────────────────
+        // ── Vị trí động riêng ─────────────────────────────────────────────
         public Func<Vector3> CounterPosition;
         public Func<Vector3> DespawnPosition;
 
-        // ── Data ──────────────────────────────────────────────────────────
+        // ── Data riêng ────────────────────────────────────────────────────
         public ContructionController ItemToBuy { get; set; }
 
         // ─────────────────────────────────────────────────────────────────
-        public GuestContext(PathFinding pathfindingService, CharacterStateMachine stateMachine)
-        {
-            PathfindingService = pathfindingService;
-            StateMachine       = stateMachine;
-        }
+        public GuestContext(PathFollower pathFollower, CharacterStateMachine stateMachine)
+            : base(pathFollower, stateMachine) { }
     }
 }
