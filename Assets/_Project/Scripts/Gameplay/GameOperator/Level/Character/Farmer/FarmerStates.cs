@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
@@ -15,6 +16,7 @@ namespace GameTemplate.Gameplay
 
         public void Enter()
         {
+            _ctx.PlayIdle.Invoke();
             Debug.Log("[WaitState] Farmer đang chờ khách.");
         }
 
@@ -46,6 +48,10 @@ namespace GameTemplate.Gameplay
         public void Enter()
         {
             //_ctx.TreeBehavior.FetchItem(OnFetched);
+
+            _ctx.ContructionBehavior.FetchFruit(
+                _ctx.ProductGroup, OnFetched);
+            _ctx.PlayIdleCarry.Invoke();
         }
 
         public void Execute() { }
@@ -55,6 +61,12 @@ namespace GameTemplate.Gameplay
         private void OnFetched(Transform[] items)
         {
             _ctx.FetchedItems = items;
+            _ctx.StateMachine.ChangeState(new MoveToGuestState(_ctx));
+        }
+
+        private void OnFetched(System.Collections.Generic.List<ProductionController> listFruit)
+        {
+            _ctx.Productions = new System.Collections.Generic.List<ProductionController>(listFruit);
             _ctx.StateMachine.ChangeState(new MoveToGuestState(_ctx));
         }
     }
@@ -96,6 +108,7 @@ namespace GameTemplate.Gameplay
                 _ctx.PathFollower.Tick(
                     _ctx.Coordinate.Invoke(), 
                     _ctx.Stat.MoveSpeed));
+            _ctx.PlayMoveCarry.Invoke();
         }
 
         public void Exit() { }
@@ -119,13 +132,20 @@ namespace GameTemplate.Gameplay
         public void Enter()
         {
             // Trigger Guest chuyển sang MoveToDespawnState
-            _ctx.CurrentGuest.OnItemDelivered();
+            _ctx.CurrentGuest.OnItemDelivered(
+                _ctx.Productions,
+                () => 
+                {
+                    // TODO: animation nhận tiền, sound...
+                    _ctx.StateMachine.ChangeState(new MoveToTreeState(_ctx));
 
-            // TODO: animation nhận tiền, sound...
-            _ctx.StateMachine.ChangeState(new MoveToTreeState(_ctx));
+                    // Remove khách sau khi trả tiền
+                    _ctx.ContructionBehavior.RemoveGuest();
 
-            // Remove khách sau khi trả tiền
-            _ctx.ContructionBehavior.RemoveGuest();
+                    _ctx.Productions = new System.Collections.Generic.List<ProductionController>();
+                });
+
+            _ctx.PlayIdle.Invoke();
         }
 
         public void Execute() { }
@@ -164,12 +184,14 @@ namespace GameTemplate.Gameplay
                 OnReached();
                 return;
             }
+
             _ctx.UpdateRotation.Invoke(
                 Quaternion.LookRotation(_ctx.PathFollower.MoveDirection));
             _ctx.UpdatePosition.Invoke(
                 _ctx.PathFollower.Tick(
                     _ctx.Coordinate.Invoke(),
                     _ctx.Stat.MoveSpeed));
+            _ctx.PlayMove.Invoke();
         }
 
         public void Exit() { }
@@ -196,6 +218,8 @@ namespace GameTemplate.Gameplay
             //    // Không có khách → về WaitState chờ LevelController push
             //    _ctx.StateMachine.ChangeState(new WaitState(_ctx));
             //}
+
+            _ctx.ResetTransform.Invoke();
 
             _ = _ctx.ContructionBehavior.CheckGuest(
                 () =>

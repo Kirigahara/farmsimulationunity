@@ -1,5 +1,8 @@
+using GameTemplate.Core.Events;
 using GameTemplate.Core.Patterns.Factory;
 using GameTemplate.Gameplay.Stats;
+using NUnit.Framework;
+using Unity.Plastic.Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
@@ -19,6 +22,8 @@ namespace GameTemplate.Gameplay
 
         // ─────────────────────────────────────────────────────────────────
 
+        public GuestContext Context=> _context;
+
         void Awake()
         {
             //_stateMachine = new CharacterStateMachine();
@@ -30,10 +35,13 @@ namespace GameTemplate.Gameplay
         }
 
         public void Setup( 
-            CharacterStateMachine stateMachine,
             ContructionController contruction,
             PathNode startNode, PathNode finishNode)
         {
+            _stateMachine = new CharacterStateMachine();
+
+            PlayIdle();
+
             Configure((GuestData)_DefaultData);
             _stateMachine = new CharacterStateMachine();
             _PathFollower = new PathFollower();
@@ -46,6 +54,11 @@ namespace GameTemplate.Gameplay
                 UpdatePosition = UpdatePosition,
                 UpdateRotation = UpdateRotation,
                 OnReachedCounter = OnReachedCounter,
+                PlayIdle = PlayIdle,
+                PlayMove = PlayMove,
+                PlayIdleCarry = PlayIdleCarry,
+                PlayMoveCarry = PlayMoveCarry,
+                ProductGroup = _ProductGroup,
                 ItemToBuy = contruction,
                 Stat = _CharacterStat,
                 CurrentNode = startNode,
@@ -71,12 +84,24 @@ namespace GameTemplate.Gameplay
         }
 
         // ── Public API cho Farmer gọi khi deliver xong ───────────────────
-        public void OnItemDelivered()
+        public void OnItemDelivered(
+            System.Collections.Generic.List<ProductionController> products,
+            Action deliverComplete)
         {
             if (_stateMachine.CurrentState is BuyingState buyingState)
-                buyingState.CompleteTransaction();
+            {
+                buyingState.MakeFetch(
+                    products,
+                    () =>
+                    {
+                        deliverComplete?.Invoke();
+                        buyingState.CompleteTransaction();
+                    });
+            }
             else
+            {
                 Debug.LogWarning("[GuestBehavior] OnItemDelivered gọi sai state!");
+            }
         }
 
         // ── Helpers ───────────────────────────────────────────────────────
@@ -100,6 +125,12 @@ namespace GameTemplate.Gameplay
         public void ApplyBuff(BuffDefinition buff)
         {
             _CharacterStat.BuffSet.Apply(buff);
+        }
+        
+        //-----
+        void Despawn()
+        {
+            EventBus.Publish(new GuestExit { _Guest = this });
         }
     }
 }

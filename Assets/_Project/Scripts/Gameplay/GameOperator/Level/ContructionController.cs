@@ -8,17 +8,21 @@ namespace GameTemplate.Gameplay
 {
     public class ContructionController : MonoBehaviour
     {
-        [SerializeField] ContructionData _Data; 
+        [SerializeField] ContructionData _Data;
         [SerializeField] GameObject[] _LevelContruction;
-        [SerializeField] GameTemplate.Core.EnumManager.ProductType _ProductType;
+        [SerializeField] Transform _GroupGrowPoint;
         [SerializeField] FarmerBehavior _MainFarmer;
         [SerializeField] PathNode _StandFarmer;
 
         Queue<GuestBehavior> _QueueGuest;
+        List<ProductionController> _ListProduct = new List<ProductionController>();
 
-        public GameTemplate.Core.EnumManager.ProductType ProductType => _ProductType;
+        public string ProductID => _Data.Id;
         public FarmerBehavior MainFarmer => _MainFarmer;
         public PathNode StandFarmer => _StandFarmer;
+        public PlantSaveData SaveData => GameplayManager.CurrentLevelSaveData.GetPlant(_Data.Id);
+        public int GuestCount => _QueueGuest.Count;
+        public int PlantLevel => SaveData.PlantLevel;
 
         private void Start()
         {
@@ -30,7 +34,12 @@ namespace GameTemplate.Gameplay
         /// </summary>
         public void ShowContruction()
         {
-
+            _LevelContruction[PlantLevel].gameObject.SetActive(true);
+            if (PlantLevel > 0)
+            {
+                GrowFruit();
+                _MainFarmer.gameObject.SetActive(true);
+            }
         }
 
         /// <summary>
@@ -39,12 +48,14 @@ namespace GameTemplate.Gameplay
         public void CallFarmer()
         {
             if (!_MainFarmer.IsWaiting) return;
+            if (_ListProduct.Count < _GroupGrowPoint.childCount) return;
+
             var guest = _QueueGuest.Peek();// Peek thay vì Dequeue — Farmer tự lấy sau
             _MainFarmer.ServeGuest(guest);
         }
 
         /// <summary>
-        /// 
+        /// Thêm khách vào Queue khi tới quầy
         /// </summary>
         /// <param name="guest"></param>
         public async Task AddGuest(GuestBehavior guest)
@@ -79,8 +90,51 @@ namespace GameTemplate.Gameplay
             }
             else
             {
-                EmptyGuest.Invoke();
+                EmptyGuest?.Invoke();
             }
+        }
+
+        async void GrowFruit()
+        {
+            //Delay 1 khoảng thời gian để cây có quả
+            await AsyncOp.Delay(_Data.GrowTime);
+
+            for (int i = 0; i < _GroupGrowPoint.childCount; i++)
+            {
+                _ListProduct.Add(
+                    GameplayManager.MainLevel.SpawnProducion(
+                        _Data.Id,
+                        _GroupGrowPoint.GetChild(i).position));
+
+                await AsyncOp.Delay(GameConfig.ProductGrowDelay);
+            }
+
+            _ = CheckGuest(() => { });
+        }
+
+        /// <summary>
+        /// Farmer lấy quả
+        /// </summary>
+        /// <param name="GroupPosition"></param>
+        /// <param name="FetchComplete"></param>
+        public async void FetchFruit(
+            Transform GroupPosition, 
+            Action<List<ProductionController>> FetchComplete)
+        {
+            for (int i = 0; i < _ListProduct.Count; i++)
+            {
+                _ListProduct[i].MoveSequence(GroupPosition.GetChild(i));
+                await AsyncOp.Delay(GameConfig.ProductGetTime);
+            }
+
+            await AsyncOp.Delay(GameConfig.ProductMoveTime);
+
+            FetchComplete?.Invoke(_ListProduct);
+
+            await AsyncOp.Delay(Time.fixedDeltaTime);
+
+            _ListProduct = new List<ProductionController>();
+            GrowFruit();
         }
     }
 }

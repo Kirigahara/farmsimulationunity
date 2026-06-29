@@ -2,6 +2,7 @@ using GameTemplate.Core.Patterns.Async;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Threading.Tasks;
 
 namespace GameTemplate.Gameplay
 {
@@ -20,15 +21,19 @@ namespace GameTemplate.Gameplay
             PathNode startNode = CurrentNode;
             Vector3 pos = CurrentPosition;
 
-            while (!endpath)
+            _ = new Func<Task>(async () =>
             {
-                (endpath, startNode, pos) = startNode.GetConnectNode(FinishNode);
+                while (!endpath)
+                {
+                    (endpath, startNode, pos) = startNode.GetConnectNode(FinishNode);
 
-                listNode.Add(pos);
-                _ = AsyncOp.Delay(Time.deltaTime);
-            }
+                    listNode.Add(pos);
 
-            SetPathCallBack.Invoke(Smooth(listNode));
+                    await AsyncOp.Delay(Time.deltaTime);
+                }
+
+                SetPathCallBack.Invoke(Smooth(listNode));
+            })();
         }
 
         /// <summary>

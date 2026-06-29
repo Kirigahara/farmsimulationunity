@@ -15,4 +15,4 @@ MonoBehaviour:
   Id: 0
   _MoveSpeed: 2
   _SpecialBuff: 0
-  _GuestPrefab: {fileID: 0}
+  _GuestPrefab: {fileID: 5081378640111839596, guid: 9e73c309783284fd2bb50baca4fe3da9, type: 3}

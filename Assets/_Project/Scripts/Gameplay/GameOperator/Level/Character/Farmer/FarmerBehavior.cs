@@ -18,7 +18,7 @@ namespace GameTemplate.Gameplay
         private WaitState _waitState;
 
         // ─────────────────────────────────────────────────────────────────
-        
+        [SerializeField] Quaternion _DefaultRotation;
 
         void Awake()
         {
@@ -33,6 +33,8 @@ namespace GameTemplate.Gameplay
 
         public void SetUp()
         {
+            PlayIdle();
+
             Configure((FarmerData)_DefaultData);
             _stateMachine = new CharacterStateMachine();
             _PathFollower = new PathFollower();
@@ -48,6 +50,12 @@ namespace GameTemplate.Gameplay
                 UpdatePosition = UpdatePosition,
                 UpdateRotation = UpdateRotation,
                 OnReachedCounter = OnReachedCounter,
+                ResetTransform = ResetTransform,
+                PlayIdle = PlayIdle,
+                PlayMove = PlayMove,
+                PlayIdleCarry = PlayIdleCarry,
+                PlayMoveCarry = PlayMoveCarry,
+                ProductGroup = _ProductGroup,
                 Stat = _CharacterStat,
                 CurrentNode = _CurrentPathNode,
             };
@@ -98,5 +106,19 @@ namespace GameTemplate.Gameplay
         {
             _CharacterStat.BuffSet.Apply(buff);
         }
+
+
+        //--------
+        void ResetTransform()
+        {
+            this.transform.rotation = _DefaultRotation;
+        }
+#if UNITY_EDITOR
+        [ContextMenu(nameof(SetDefaultRotation))]
+        public void SetDefaultRotation()
+        {
+            _DefaultRotation = this.transform.rotation;
+        }
+#endif
     }
 }

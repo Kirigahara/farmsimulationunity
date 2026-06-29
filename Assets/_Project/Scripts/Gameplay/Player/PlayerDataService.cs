@@ -34,7 +34,7 @@ namespace GameTemplate.Gameplay
                 _cache = new PlayerData()
                 {
                     _Gem = 0,
-                    _Gold = 100,
+                    _Gold = BigNumber.FromRaw(100),
                     _Level = 1,
                 };
 

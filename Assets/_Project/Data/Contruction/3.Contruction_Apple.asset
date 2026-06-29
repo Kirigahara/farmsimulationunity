@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ContructionData
   Id: 3
   _Cost: 70
+  _UpgrateTime: 15
+  _GrowTime: 5
   _ProductPrefab: {fileID: 0}
   _Levels:
   - Cost: 7000

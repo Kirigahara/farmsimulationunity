@@ -1,5 +1,7 @@
 using GameTemplate.Core.Data;
 using GameTemplate.Core.DI;
+using GameTemplate.Core.Events;
+using GameTemplate.Core.Patterns.Async;
 using GameTemplate.Core.Patterns.Factory;
 using System;
 using System.Collections.Generic;
@@ -7,6 +9,8 @@ using UnityEngine;
 
 namespace GameTemplate.Gameplay
 {
+    public struct GuestExit : IGameEvent { public GuestBehavior _Guest; };
+
     public class LevelController : MonoBehaviour
     {
         [Header("Tree")]
@@ -24,13 +28,16 @@ namespace GameTemplate.Gameplay
 
         PrefabFactory<GuestData, GuestBehavior> _GuestFactory;
         PrefabFactory<ContructionData, ProductionController> _ProductionFactory;
- 
+
         public List<ContructionController> ListContruction => _ListContruction;
         public List<DockController> ListDock => _ListDock;
         public PathNode EnterGuestNode => _EnterGuestNode;
         public PathNode ExitGuestNode => _ExitGuestNode;
 
-        int _CurrentMaxGuestAmout = 0;
+        int _CurrentGuestCount = 0;
+        int _CurrentMaxGuestAmout = 
+            (int)GameConfig.LevelConfigs[GameplayManager.PlayerDataService.PlayerData._Level].
+            CustomerUpgrade.Levels[GameplayManager.CurrentLevelSaveData.CustomerUpgradeLevel].Value;
 
         public static LevelController CreateLevel(int level, Vector3 position)
         {
@@ -47,21 +54,50 @@ namespace GameTemplate.Gameplay
                 GameConfig.LevelConfigs[GameplayManager.PlayerDataService.PlayerData._Level].ContructionDatas);
         }
 
-        public void SpawnGuest()
+        private async void Start()
         {
-            var guest = _GuestFactory.Create("0", _EnterGuestNode.GetRandomPosition());
+            EventBus.Subscribe<GuestExit>(GuestExit);
+
+            await AsyncOp.Delay(GameConfig.DelayStartGameplay);
+            OpenGuest();
         }
-        public void SpawnProducion(string id, Vector3 Position)
+
+        public GuestBehavior SpawnGuest()
         {
-            var production = _ProductionFactory.Create(id, Position);
+            return _GuestFactory.Create("0", _EnterGuestNode.GetRandomPosition());
+        }
+        public ProductionController SpawnProducion(string id, Vector3 Position)
+        {
+            return _ProductionFactory.Create(id, Position);
+        }
+
+        async void OpenGuest()
+        {
+            var guest = SpawnGuest();
+            var contruction = GetEmptyContruction();
+            var dock = GetEmptyDock();
+
+            dock.SetGuest(guest);
+
+            guest.Setup(
+                contruction, _EnterGuestNode,
+                dock.GuestStandPoint);
+
+            await AsyncOp.Delay(GameConfig.DelaySpawnGuest);
+
+            _CurrentGuestCount++;
+            if (_CurrentGuestCount < _CurrentMaxGuestAmout)
+            {
+                OpenGuest();
+            }
         }
 
         private void Update()
         {
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 if (RaycastBox(
-                    Camera.main.transform.position, Camera.main.transform.forward, 
+                    Camera.main.transform.position, Camera.main.transform.forward,
                     out RaycastHit hit, 100f, _TargetLayer))
                 {
                     Debug.Log($"Hit box: {hit.collider.gameObject.name} tại {hit.point}");
@@ -92,6 +128,35 @@ namespace GameTemplate.Gameplay
                 hit = default;
             }
             return false;
+        }
+
+        public DockController GetEmptyDock()
+        {
+            return StaticFunction.GetRandomList(_ListDock.FindAll(x => x.CurrentGuest == null));
+        }
+
+        public ContructionController GetEmptyContruction()
+        {
+            return StaticFunction.GetRandomList(_ListContruction.FindAll(x => x.PlantLevel > 0));
+        }
+
+        public void GuestExit(GuestExit e)
+        {
+            for (int i = 0; i < e._Guest.Context.Productions.Count; i++)
+            {
+                _ProductionFactory.Return(
+                    e._Guest.Context.ItemToBuy.ProductID,
+                    e._Guest.Context.Productions[i]);
+            }
+            _GuestFactory.Return("0", e._Guest);
+
+            _CurrentGuestCount--;
+            OpenGuest();
+        }
+
+        private void OnDestroy()
+        {
+            EventBus.Unsubscribe<GuestExit>(GuestExit);
         }
     }
 }

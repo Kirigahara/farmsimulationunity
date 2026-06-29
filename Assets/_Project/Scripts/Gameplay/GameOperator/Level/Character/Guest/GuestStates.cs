@@ -1,3 +1,6 @@
+using GameTemplate.Core.Events;
+using GameTemplate.Core.Patterns.Async;
+using System;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
@@ -37,6 +40,8 @@ namespace GameTemplate.Gameplay
                 _ctx.PathFollower.Tick(
                     _ctx.Coordinate.Invoke(),
                     _ctx.Stat.MoveSpeed));
+
+            _ctx.PlayMove.Invoke();
         }
 
         public void Exit() { }
@@ -61,6 +66,7 @@ namespace GameTemplate.Gameplay
 
         public void Enter()
         {
+            _ctx.PlayIdle.Invoke();
             Debug.Log($"[BuyingState] Guest đang chờ item: {_ctx.ItemToBuy}");
         }
 
@@ -74,6 +80,23 @@ namespace GameTemplate.Gameplay
         public void CompleteTransaction()
         {
             _ctx.StateMachine.ChangeState(new MoveToDespawnState(_ctx));
+        }
+
+        public async void MakeFetch(
+            System.Collections.Generic.List<ProductionController> listFruit,
+            Action FetchComplete)
+        {
+            _ctx.Productions = new System.Collections.Generic.List<ProductionController>();
+
+            for(int i = 0; i < listFruit.Count; i++)
+            {
+                listFruit[i].MoveSequence(_ctx.ProductGroup.GetChild(i));
+                await AsyncOp.Delay(GameConfig.ProductGetTime);
+            }
+
+            await AsyncOp.Delay(GameConfig.ProductMoveTime);
+
+            FetchComplete?.Invoke();
         }
     }
 
@@ -113,6 +136,8 @@ namespace GameTemplate.Gameplay
                 _ctx.PathFollower.Tick(
                     _ctx.Coordinate.Invoke(),
                     _ctx.Stat.MoveSpeed));
+
+            _ctx.PlayMoveCarry.Invoke();
         }
 
         public void Exit() { }
@@ -137,6 +162,10 @@ namespace GameTemplate.Gameplay
         {
             // Nếu cần thông báo ra ngoài thì publish EventBus ở đây
             // EventBus.Publish(new GuestDespawnedEvent { Item = _ctx.ItemToBuy });
+
+            EventBus.Publish(new GuestExit());
+
+            _ctx.PlayIdle.Invoke();
         }
 
         public void Execute() { }

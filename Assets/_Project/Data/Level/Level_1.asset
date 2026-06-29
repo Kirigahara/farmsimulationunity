@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 0cdd5e534149f654192ed622abda2a6a, type: 3}
   m_Name: Level_1
   m_EditorClassIdentifier: GameTemplate.Gameplay:GameTemplate.Gameplay:LevelConfig
   ContructionDatas:
@@ -24,7 +24,7 @@ MonoBehaviour:
       Value: 1
     - Cost: 1000
       Value: 2
-    - Cost: 20000
+    - Cost: 10000
       Value: 3
   - PlantId: 2
     Levels:
@@ -32,7 +32,7 @@ MonoBehaviour:
       Value: 1
     - Cost: 2000
       Value: 2
-    - Cost: 40000
+    - Cost: 20000
       Value: 3
   - PlantId: 3
     Levels:
@@ -40,7 +40,7 @@ MonoBehaviour:
       Value: 1
     - Cost: 3000
       Value: 2
-    - Cost: 60000
+    - Cost: 30000
       Value: 3
   - PlantId: 4
     Levels:
@@ -48,26 +48,26 @@ MonoBehaviour:
       Value: 1
     - Cost: 4000
       Value: 2
-    - Cost: 80000
+    - Cost: 40000
       Value: 3
   GlobalPlantUpgrade:
     Levels:
     - Cost: 0
       Value: 1
-    - Cost: 1000
+    - Cost: 5000
       Value: 1.5
-    - Cost: 2000
+    - Cost: 15000
       Value: 2
-    - Cost: 3000
-      Value: 2.5
+    - Cost: 45000
+      Value: 3
   CustomerUpgrade:
     Levels:
     - Cost: 0
       Value: 1
     - Cost: 1000
       Value: 2
-    - Cost: 2000
+    - Cost: 10000
       Value: 3
-    - Cost: 3000
+    - Cost: 20000
       Value: 4
   _PrefabLevel: {fileID: 0}

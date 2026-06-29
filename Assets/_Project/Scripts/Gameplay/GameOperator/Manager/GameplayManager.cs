@@ -12,6 +12,9 @@ namespace GameTemplate.Gameplay
 
         public static LevelController MainLevel => Instance._MainLevel;
         public static PlayerDataService PlayerDataService => Instance._PlayerDataService;
+        public static LevelSaveData CurrentLevelSaveData =>
+            PlayerDataService.PlayerData.GetLevel(
+                PlayerDataService.PlayerData._Level);
 
         protected override void Awake()
         {
