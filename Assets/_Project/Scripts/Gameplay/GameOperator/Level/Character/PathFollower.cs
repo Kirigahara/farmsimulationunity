@@ -13,6 +13,8 @@ namespace GameTemplate.Gameplay
         public Vector3 CurrentTarget => _path[_currentIndex];
         public Vector3 MoveDirection { get; private set; } // hướng di chuyển frame hiện tại
 
+        public bool _PathExist => _path != null;
+
         public void SetPath(List<Vector3> path, float stoppingDistance = 0.1f)
         {
             _path = path;
@@ -47,5 +49,7 @@ namespace GameTemplate.Gameplay
 
             return nextPosition;
         }
+
+        public void EmptyPath() => _path = null;
     }
 }

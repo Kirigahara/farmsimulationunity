@@ -1,3 +1,4 @@
+using GameTemplate.Core.Events;
 using GameTemplate.Core.Patterns.Async;
 using System;
 using System.Collections.Generic;
@@ -18,26 +19,33 @@ namespace GameTemplate.Gameplay
         List<ProductionController> _ListProduct = new List<ProductionController>();
 
         public string ProductID => _Data.Id;
+        public string ProductName => _Data.ProductName;
+        public float UpgradeTime => _Data.UpgradeTime;
         public FarmerBehavior MainFarmer => _MainFarmer;
         public PathNode StandFarmer => _StandFarmer;
         public PlantSaveData SaveData => GameplayManager.CurrentLevelSaveData.GetPlant(_Data.Id);
         public int GuestCount => _QueueGuest.Count;
         public int PlantLevel => SaveData.PlantLevel;
+        public (double, double, bool) CurrentUpgradeConfig => _Data.GetLevelConfig(PlantLevel);
+
 
         private void Start()
         {
             ShowContruction();
         }
 
+
+
         /// <summary>
         /// Hiện hình dạng contruction theo level trong save data
         /// </summary>
         public void ShowContruction()
         {
-            _LevelContruction[PlantLevel].gameObject.SetActive(true);
+            _LevelContruction[Mathf.Min(_LevelContruction.Length - 1, PlantLevel)].gameObject.SetActive(true);
             if (PlantLevel > 0)
             {
                 GrowFruit();
+                _LevelContruction[0].SetActive(false);
                 _MainFarmer.gameObject.SetActive(true);
             }
         }
@@ -85,12 +93,12 @@ namespace GameTemplate.Gameplay
             await AsyncOp.Delay(Time.fixedDeltaTime); // cố ý Delay 1 khoản fixedDeltaTime để đảm bảo Queue ổn định sau khi Dequeue (Just in case) 
 
             if (_QueueGuest.Count > 0)
-            {
+            {   
                 CallFarmer();
             }
             else
             {
-                EmptyGuest?.Invoke();
+                //EmptyGuest?.Invoke();
             }
         }
 
@@ -112,12 +120,18 @@ namespace GameTemplate.Gameplay
             _ = CheckGuest(() => { });
         }
 
+        public void StartFetchFruit(Transform GroupPosition,
+            Action<List<ProductionController>> FetchComplete)
+        {
+            _ = FetchFruit(GroupPosition, FetchComplete);
+        }
+
         /// <summary>
         /// Farmer lấy quả
         /// </summary>
         /// <param name="GroupPosition"></param>
         /// <param name="FetchComplete"></param>
-        public async void FetchFruit(
+        public async Task FetchFruit(
             Transform GroupPosition, 
             Action<List<ProductionController>> FetchComplete)
         {
@@ -135,6 +149,45 @@ namespace GameTemplate.Gameplay
 
             _ListProduct = new List<ProductionController>();
             GrowFruit();
+        }
+
+        public void LevelUp()
+        {
+            double cost = 0;
+            double salePrice = 0;
+            bool isMax = false;
+
+            (cost, salePrice, isMax) = CurrentUpgradeConfig;
+
+            if (isMax) return;
+
+            if (GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(BigNumber.FromRaw(cost)))
+            {
+                if (SaveData.PlantLevel == 0)
+                {
+                    SaveData.PlantLevel++;
+                    _LevelContruction[0].SetActive(false);
+                    ShowContruction();
+
+                    EventBus.Publish(new HideUnlockPopup());
+                    EventBus.Publish(new ActivateLevel());
+
+                    _ = GameplayManager.PlayerDataService.SaveAsync();
+                }
+                else
+                {
+                    EventBus.Publish(new OnUpgradeSequence
+                    {
+                        _UpgradeTime = _Data.UpgradeTime,
+                        _CompleteUpgrade = () => 
+                        {
+                            SaveData.PlantLevel++;
+                            EventBus.Publish(new HideUpgradePopup());
+                            _ = GameplayManager.PlayerDataService.SaveAsync();
+                        }
+                    });
+                }
+            }
         }
     }
 }

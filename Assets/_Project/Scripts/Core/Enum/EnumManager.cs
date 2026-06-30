@@ -13,7 +13,7 @@ namespace GameTemplate.Core
         public enum ProductType
         {
             Tomato = 0,
-            Orange = 1,
+            Apple = 1,
             Corn = 2,
             Grape = 3,
         }

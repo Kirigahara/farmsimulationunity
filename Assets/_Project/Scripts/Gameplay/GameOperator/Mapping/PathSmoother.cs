@@ -1,8 +1,9 @@
 using GameTemplate.Core.Patterns.Async;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace GameTemplate.Gameplay
 {
@@ -31,6 +32,11 @@ namespace GameTemplate.Gameplay
 
                     await AsyncOp.Delay(Time.deltaTime);
                 }
+
+                //for (int i = 0; i < listNode.Count - 1; i++)
+                //{
+                //    Debug.DrawLine(listNode[i], listNode[i + 1], Color.red, 20.0f);
+                //}
 
                 SetPathCallBack.Invoke(Smooth(listNode));
             })();

@@ -10,6 +10,8 @@ using UnityEngine;
 namespace GameTemplate.Gameplay
 {
     public struct GuestExit : IGameEvent { public GuestBehavior _Guest; };
+    public struct ActivateLevel : IGameEvent { };
+    public struct EventOpenGuest : IGameEvent { };
 
     public class LevelController : MonoBehaviour
     {
@@ -35,7 +37,7 @@ namespace GameTemplate.Gameplay
         public PathNode ExitGuestNode => _ExitGuestNode;
 
         int _CurrentGuestCount = 0;
-        int _CurrentMaxGuestAmout = 
+        int _CurrentMaxGuestAmout => 
             (int)GameConfig.LevelConfigs[GameplayManager.PlayerDataService.PlayerData._Level].
             CustomerUpgrade.Levels[GameplayManager.CurrentLevelSaveData.CustomerUpgradeLevel].Value;
 
@@ -57,6 +59,8 @@ namespace GameTemplate.Gameplay
         private async void Start()
         {
             EventBus.Subscribe<GuestExit>(GuestExit);
+            EventBus.Subscribe<ActivateLevel>(OnActivateEvent);
+            EventBus.Subscribe<EventOpenGuest>(OnOpenGuest);
 
             await AsyncOp.Delay(GameConfig.DelayStartGameplay);
             OpenGuest();
@@ -71,8 +75,16 @@ namespace GameTemplate.Gameplay
             return _ProductionFactory.Create(id, Position);
         }
 
+        void OnOpenGuest(EventOpenGuest e)
+        {
+            OpenGuest();
+        }
+
         async void OpenGuest()
         {
+            await AsyncOp.Delay(Time.fixedDeltaTime);
+            if (GameplayManager.CurrentLevelSaveData.ActiveLevel == 0) return;
+
             var guest = SpawnGuest();
             var contruction = GetEmptyContruction();
             var dock = GetEmptyDock();
@@ -81,7 +93,7 @@ namespace GameTemplate.Gameplay
 
             guest.Setup(
                 contruction, _EnterGuestNode,
-                dock.GuestStandPoint);
+                dock);
 
             await AsyncOp.Delay(GameConfig.DelaySpawnGuest);
 
@@ -96,11 +108,77 @@ namespace GameTemplate.Gameplay
         {
             if (Input.GetMouseButtonDown(0))
             {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
                 if (RaycastBox(
-                    Camera.main.transform.position, Camera.main.transform.forward,
-                    out RaycastHit hit, 100f, _TargetLayer))
+                    ray.origin, ray.direction,
+                    out RaycastHit hit, Mathf.Infinity, _TargetLayer))
                 {
                     Debug.Log($"Hit box: {hit.collider.gameObject.name} tại {hit.point}");
+
+                    if (hit.collider.gameObject.tag == "Construction")
+                    {
+                        ContructionController contruction = hit.collider.gameObject.GetComponent<ContructionController>();
+
+                        double cost = 0;
+                        double salePrice = 0;
+                        bool isMax = false;
+
+                        (cost, salePrice, isMax) = contruction.CurrentUpgradeConfig;
+
+                        if (contruction.PlantLevel == 0)
+                        {
+                            EventBus.Publish(
+                            new SetupUnlockPopup
+                            {
+                                _Price = cost,
+                                _ProductName = contruction.ProductName,
+                                _ConstructionPosition = hit.collider.transform.position,
+                                ActionTriggerBtnUnlock = () =>
+                                {
+                                    contruction.LevelUp();
+                                }
+                            });
+                            EventBus.Publish(
+                                new CameraAlign 
+                                { 
+                                    _Target = hit.collider.transform.position,
+                                    _AlignComplete = 
+                                    () => 
+                                    {
+                                        EventBus.Publish<ShowUnlockPopup>(new ShowUnlockPopup());
+                                    }
+                                });
+                        }
+                        else
+                        {
+                            EventBus.Publish(
+                            new SetupUpgradePopup
+                            {
+                                _Price = cost,
+                                _ProductName = contruction.ProductName,
+                                _ConstructionPosition = hit.collider.transform.position,
+                                _Level = contruction.PlantLevel,
+                                _SalePrice = salePrice,
+                                _UpdateTime = contruction.UpgradeTime,
+                                _IsMaxUpgrade = isMax,
+                                ActionTriggerBtnLevelUp = () =>
+                                {
+                                    contruction.LevelUp();
+                                }
+                            });
+                            EventBus.Publish(
+                                new CameraAlign
+                                {
+                                    _Target = hit.collider.transform.position,
+                                    _AlignComplete =
+                                    () =>
+                                    {
+                                        EventBus.Publish(new ShowUpgradePopup());
+                                    }
+                                });
+                        }
+                    }
                 }
             }
         }
@@ -142,8 +220,12 @@ namespace GameTemplate.Gameplay
 
         public void GuestExit(GuestExit e)
         {
+            e._Guest.Context.DockController = null;
+
             for (int i = 0; i < e._Guest.Context.Productions.Count; i++)
             {
+                e._Guest.Context.Productions[i].transform.parent = null;
+
                 _ProductionFactory.Return(
                     e._Guest.Context.ItemToBuy.ProductID,
                     e._Guest.Context.Productions[i]);
@@ -153,10 +235,18 @@ namespace GameTemplate.Gameplay
             _CurrentGuestCount--;
             OpenGuest();
         }
+        public void OnActivateEvent(ActivateLevel e)
+        {
+            GameplayManager.CurrentLevelSaveData.ActiveLevel = 1;
+            OpenGuest();
+            _ = ServiceLocator.Get<PlayerDataService>().SaveAsync();
+        }
 
         private void OnDestroy()
         {
             EventBus.Unsubscribe<GuestExit>(GuestExit);
+            EventBus.Unsubscribe<ActivateLevel>(OnActivateEvent);
+            EventBus.Unsubscribe<EventOpenGuest>(OnOpenGuest);
         }
     }
 }

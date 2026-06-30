@@ -259,6 +259,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69b48b8405d57cc4aa6d3b58aaf2185c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameTemplate.Gameplay::GameTemplate.Gameplay.GameplayBootstrap
+  _GameConfig: {fileID: 11400000, guid: 3269d7e48c43a1e479e5bb6aa4fc73fc, type: 2}
+  _SpriteConfig: {fileID: 11400000, guid: 8bcaf9e4c84c0014ea84400a0af73ef3, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

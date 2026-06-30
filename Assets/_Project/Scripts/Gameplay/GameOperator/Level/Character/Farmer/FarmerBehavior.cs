@@ -9,7 +9,7 @@ namespace GameTemplate.Gameplay
         // ── Inspector ─────────────────────────────────────────────────────
         [Header("References")]
         private PathFollower _PathFollower;
-        private ContructionController _ContructionController;
+        public ContructionController _ContructionController;
         private LevelController _levelController;
 
         // ── Runtime ───────────────────────────────────────────────────────
@@ -29,6 +29,8 @@ namespace GameTemplate.Gameplay
         {
             // Đăng ký với LevelController để nhận khách mới
             //_levelController.RegisterFarmer(this, _treeBehavior);
+
+            SetUp();
         }
 
         public void SetUp()
@@ -51,6 +53,7 @@ namespace GameTemplate.Gameplay
                 UpdateRotation = UpdateRotation,
                 OnReachedCounter = OnReachedCounter,
                 ResetTransform = ResetTransform,
+                ResetSetup = SetUp,
                 PlayIdle = PlayIdle,
                 PlayMove = PlayMove,
                 PlayIdleCarry = PlayIdleCarry,

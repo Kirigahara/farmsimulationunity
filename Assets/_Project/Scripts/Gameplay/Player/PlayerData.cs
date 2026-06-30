@@ -12,7 +12,7 @@ namespace GameTemplate.Gameplay
     public class PlantSaveData
     {
         public string PlantId;      // "1", "2", "3"... do GD đánh số
-        public int PlantLevel;      // level của cây (lớn hơn, ra quả nhiều hơn)
+        public int PlantLevel;      // level của cây
     }
 
     // ---------------------------------------------------------------
@@ -34,6 +34,7 @@ namespace GameTemplate.Gameplay
     public class LevelSaveData
     {
         public int LevelId;
+        public int ActiveLevel;
 
         // Trạng thái từng cây trong màn (GD config bao nhiêu cây thì có bấy nhiêu)
         public List<PlantSaveData> Plants = new List<PlantSaveData>();

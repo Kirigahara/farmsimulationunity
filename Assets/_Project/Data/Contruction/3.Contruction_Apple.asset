@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: 3.Contruction_Apple
   m_EditorClassIdentifier: Assembly-CSharp::ContructionData
   Id: 3
+  _ProductName: Apple
   _Cost: 70
   _UpgrateTime: 15
   _GrowTime: 5
-  _ProductPrefab: {fileID: 0}
+  _ProductPrefab: {fileID: 431050899201095724, guid: 7f43ad0a1dc9942deb52963a8ee6e6f4, type: 3}
   _Levels:
   - Cost: 7000
     Value: 70

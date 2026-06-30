@@ -1,3 +1,4 @@
+using GameTemplate.Core.Data;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -58,6 +59,7 @@ public class GrassArea : MonoBehaviour
     void Awake()
     {
         _mainCamera = Camera.main;
+        grassCount = Mathf.RoundToInt((float)grassCount * DataManager._ReduceGrassOnQuality);
 
         List<Vector3> limitPoint = new List<Vector3>();
         for (int i = 0; i < this.transform.childCount; i++)

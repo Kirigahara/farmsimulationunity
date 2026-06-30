@@ -19,6 +19,9 @@ namespace GameTemplate.Gameplay
         [SerializeField] float _ProductGetTime = 0.2f;
         [SerializeField] float _ProductMoveTime = 0.5f;
 
+        [Header("Length")]
+        [SerializeField] float _ConstructionToPopup = 3.6f;
+
         public static GuestData[] AllGuestData => ServiceLocator.Get<GameplayBootstrap>()._GameConfig._AllGuestData;
         public static LevelConfig[] LevelConfigs => ServiceLocator.Get<GameplayBootstrap>()._GameConfig._LevelConfigs;
         public static float ProductGrowDelay => ServiceLocator.Get<GameplayBootstrap>()._GameConfig._ProductGrowDelay;
@@ -26,5 +29,10 @@ namespace GameTemplate.Gameplay
         public static float ProductGetTime => ServiceLocator.Get<GameplayBootstrap>()._GameConfig._ProductGetTime;
         public static float DelayStartGameplay => ServiceLocator.Get<GameplayBootstrap>()._GameConfig._DelayStartGameplay;
         public static float DelaySpawnGuest => ServiceLocator.Get<GameplayBootstrap>()._GameConfig._DelaySpawnGuest;
+        public static float ConstructionToPopup => ServiceLocator.Get<GameplayBootstrap>()._GameConfig._ConstructionToPopup;
+
+        public static LevelConfig CurrentLevelConfig =>
+            ServiceLocator.Get<GameplayBootstrap>()._GameConfig._LevelConfigs[
+                ServiceLocator.Get<PlayerDataService>().PlayerData._Level];
     }
 }

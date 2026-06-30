@@ -8,6 +8,9 @@ namespace GameTemplate.Gameplay
     public class GameplayBootstrap : MonoBehaviour
     {
         public GameConfig _GameConfig;
+        public SpriteConfig _SpriteConfig;
+
+        
 
         private void Awake()
         {

@@ -17,7 +17,7 @@ namespace GameTemplate.Gameplay
             {
                 default:
                 case NavigateType.Random:
-                    return GetRandomPosition();
+                    return Node._ConnectNode.GetRandomPosition();
                 case NavigateType.Straight:
                     return
                         GetRandomStraight(this.transform.position,
@@ -72,7 +72,7 @@ namespace GameTemplate.Gameplay
         {
             var nextNavigate = _Navigates.Find(x => x._FinishNode == FinishNode);
 
-            if (nextNavigate != null) return (false, null, Vector3.zero);
+            if (nextNavigate == null) return (false, null, Vector3.zero);
 
             return(
                 nextNavigate._ConnectNode == FinishNode, 

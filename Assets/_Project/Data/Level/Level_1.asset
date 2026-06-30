@@ -18,7 +18,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0bb6efc78f5e558408ccaee90b495f9e, type: 2}
   - {fileID: 11400000, guid: 4e52f9732cc88a440833cd9b45fde477, type: 2}
   PlantUpgrades:
-  - PlantId: 1
+  - _Name: Tomato Profit
+    _Description: x{0} Tomato Profit
+    PlantId: 1
+    PlantType: 0
     Levels:
     - Cost: 0
       Value: 1
@@ -26,7 +29,10 @@ MonoBehaviour:
       Value: 2
     - Cost: 10000
       Value: 3
-  - PlantId: 2
+  - _Name: Corn Profit
+    _Description: x{0} Corn Profit
+    PlantId: 2
+    PlantType: 2
     Levels:
     - Cost: 0
       Value: 1
@@ -34,7 +40,10 @@ MonoBehaviour:
       Value: 2
     - Cost: 20000
       Value: 3
-  - PlantId: 3
+  - _Name: Apple Profit
+    _Description: x{0} Apple Profit
+    PlantId: 3
+    PlantType: 1
     Levels:
     - Cost: 0
       Value: 1
@@ -42,7 +51,10 @@ MonoBehaviour:
       Value: 2
     - Cost: 30000
       Value: 3
-  - PlantId: 4
+  - _Name: Grape Profit
+    _Description: x{0} Grape Profit
+    PlantId: 4
+    PlantType: 3
     Levels:
     - Cost: 0
       Value: 1
@@ -51,16 +63,20 @@ MonoBehaviour:
     - Cost: 40000
       Value: 3
   GlobalPlantUpgrade:
+    _Name: Fruits Global Profit
+    _Description: x{0} all Fruits Profit
     Levels:
     - Cost: 0
       Value: 1
     - Cost: 5000
-      Value: 1.5
+      Value: 1
     - Cost: 15000
       Value: 2
     - Cost: 45000
       Value: 3
   CustomerUpgrade:
+    _Name: Add Customer
+    _Description: Add {0} Customer
     Levels:
     - Cost: 0
       Value: 1
@@ -70,4 +86,4 @@ MonoBehaviour:
       Value: 3
     - Cost: 20000
       Value: 4
-  _PrefabLevel: {fileID: 0}
+  _PrefabLevel: {fileID: 8468475531384354600, guid: 10790a6442fb70945b9833b15be0ef9a, type: 3}

@@ -1,3 +1,4 @@
+using GameTemplate.Core;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
@@ -10,10 +11,22 @@ namespace GameTemplate.Gameplay
     public struct UpgradeLevelConfig
     {
         [Tooltip("Chi phí để nâng lên level này.")]
-        public int Cost;
+        public double Cost;
 
         [Tooltip("Giá trị hiệu lực của level này (yield, multiplier, customer count...).")]
-        public float Value;
+        public int Value;
+    }
+
+    [System.Serializable]
+    public class UpgradeContext
+    {
+        public string _Name;
+        public string _Description;
+
+        public string GetDescription(float value) 
+        {
+            return string.Format(_Description, value); 
+        }
     }
 
     // ---------------------------------------------------------------
@@ -21,25 +34,29 @@ namespace GameTemplate.Gameplay
     // ---------------------------------------------------------------
 
     [System.Serializable]
-    public class PlantUpgradeConfig
+    public class PlantUpgradeConfig: UpgradeContext 
     {
         [Tooltip("Id phải khớp với ConstructionData.Id của cây tương ứng.")]
         public string PlantId;
+
+        public EnumManager.ProductType PlantType;
 
         [Tooltip("Danh sách các level nâng cấp. Index 0 = level 1, index 1 = level 2...")]
         public UpgradeLevelConfig[] Levels;
 
         public int MaxLevel => Levels?.Length ?? 0;
 
-        public bool TryGetLevel(int level, out UpgradeLevelConfig config)
+        public bool TryGetLevel(int level, out UpgradeLevelConfig config, out bool isMax)
         {
-            int index = level - 1;
+            int index = level + 1;
             if (Levels != null && index >= 0 && index < Levels.Length)
             {
                 config = Levels[index];
+                isMax = index == Levels.Length;
                 return true;
             }
-            config = default;
+            config = Levels[Levels.Length - 1];
+            isMax = true;
             return false;
         }
     }
@@ -49,22 +66,24 @@ namespace GameTemplate.Gameplay
     // ---------------------------------------------------------------
 
     [System.Serializable]
-    public class GlobalPlantUpgradeConfig
+    public class GlobalPlantUpgradeConfig : UpgradeContext
     {
         [Tooltip("Danh sách các level nâng cấp toàn bộ cây.")]
         public UpgradeLevelConfig[] Levels;
 
         public int MaxLevel => Levels?.Length ?? 0;
 
-        public bool TryGetLevel(int level, out UpgradeLevelConfig config)
+        public bool TryGetLevel(int level, out UpgradeLevelConfig config, out bool isMax)
         {
-            int index = level - 1;
+            int index = level + 1;
             if (Levels != null && index >= 0 && index < Levels.Length)
             {
                 config = Levels[index];
+                isMax = index == Levels.Length;
                 return true;
             }
-            config = default;
+            config = Levels[Levels.Length - 1];
+            isMax = true;
             return false;
         }
     }
@@ -74,22 +93,24 @@ namespace GameTemplate.Gameplay
     // ---------------------------------------------------------------
 
     [System.Serializable]
-    public class CustomerUpgradeConfig
+    public class CustomerUpgradeConfig : UpgradeContext
     {
         [Tooltip("Danh sách các level nâng cấp khách hàng.")]
         public UpgradeLevelConfig[] Levels;
 
         public int MaxLevel => Levels?.Length ?? 0;
 
-        public bool TryGetLevel(int level, out UpgradeLevelConfig config)
+        public bool TryGetLevel(int level, out UpgradeLevelConfig config, out bool isMax)
         {
-            int index = level - 1;
+            int index = level + 1;
             if (Levels != null && index >= 0 && index < Levels.Length)
             {
                 config = Levels[index];
+                isMax = index == Levels.Length;
                 return true;
             }
-            config = default;
+            config = Levels[Levels.Length - 1];
+            isMax = true;
             return false;
         }
     }

@@ -1,0 +1,1 @@
+D:\GitProject\FarmSimulationUnity\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\build\intermediates\cxx\RelWithDebInfo\4i192v4v\obj\arm64-v8a

@@ -16,6 +16,7 @@ namespace GameTemplate.Gameplay
         
         public Action OnReachedCounter;
         public Action ResetTransform;
+        public Action DeSpawn;
 
         //-------Animation-------
         public Action PlayIdle;

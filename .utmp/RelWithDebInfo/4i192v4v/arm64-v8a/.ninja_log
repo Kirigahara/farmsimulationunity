@@ -1,0 +1,12 @@
+# ninja log v5
+121	573	8044879041150789	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	e2657bf0096e70ab
+575	973	8044879044873086	D:/GitProject/FarmSimulationUnity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/4i192v4v/obj/arm64-v8a/libswappywrapper.so	8043835fa5d80bbf
+69	2109	8044879056671879	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	b3694d31dca7fe85
+27	2134	8044879056593500	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	97476734db91abba
+105	2240	8044879057966319	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	fb54a8c61afb33f4
+1	2280	8044879058343823	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	828b36de75b67370
+54	2354	8044879059104201	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	daf9b994de8ec0d5
+86	2395	8044879059527116	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	e4f0e4843e280379
+40	2518	8044879060757646	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	223e056db3b7ea94
+15	2649	8044879062083309	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	ebb61851cceb283
+2650	3103	8044879066675996	D:/GitProject/FarmSimulationUnity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/4i192v4v/obj/arm64-v8a/libgame.so	2eee751f2f4a45ff

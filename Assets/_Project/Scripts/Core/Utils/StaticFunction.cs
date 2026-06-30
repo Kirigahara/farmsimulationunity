@@ -571,7 +571,7 @@ public class StaticFunction
         int[] result = new int[count];
         System.Array.Copy(pool, result, count);
 
-        DebugArray(result);
+        //DebugArray(result);
         return result;
     }
 

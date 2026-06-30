@@ -1,8 +1,6 @@
 using GameTemplate.Core.Events;
 using GameTemplate.Core.Patterns.Factory;
 using GameTemplate.Gameplay.Stats;
-using NUnit.Framework;
-using Unity.Plastic.Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
@@ -36,7 +34,7 @@ namespace GameTemplate.Gameplay
 
         public void Setup( 
             ContructionController contruction,
-            PathNode startNode, PathNode finishNode)
+            PathNode startNode, DockController dock)
         {
             _stateMachine = new CharacterStateMachine();
 
@@ -54,6 +52,7 @@ namespace GameTemplate.Gameplay
                 UpdatePosition = UpdatePosition,
                 UpdateRotation = UpdateRotation,
                 OnReachedCounter = OnReachedCounter,
+                DeSpawn = Despawn,
                 PlayIdle = PlayIdle,
                 PlayMove = PlayMove,
                 PlayIdleCarry = PlayIdleCarry,
@@ -62,7 +61,8 @@ namespace GameTemplate.Gameplay
                 ItemToBuy = contruction,
                 Stat = _CharacterStat,
                 CurrentNode = startNode,
-                FinishNode = finishNode
+                FinishNode = dock.GuestStandPoint,
+                DockController = dock
             };
 
             _stateMachine.ChangeState(new MoveToCounterState(_context));
@@ -86,11 +86,11 @@ namespace GameTemplate.Gameplay
         // ── Public API cho Farmer gọi khi deliver xong ───────────────────
         public void OnItemDelivered(
             System.Collections.Generic.List<ProductionController> products,
-            Action deliverComplete)
+            System.Action deliverComplete)
         {
             if (_stateMachine.CurrentState is BuyingState buyingState)
             {
-                buyingState.MakeFetch(
+                _ = buyingState.MakeFetch(
                     products,
                     () =>
                     {

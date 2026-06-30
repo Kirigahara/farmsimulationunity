@@ -28,7 +28,7 @@ namespace GameTemplate.Gameplay
         public async Task CheckPlayerData()
         {
             _cache ??= await _dataManager.LoadAsync<PlayerData>(KEY);
-            if(_cache == null)
+            if (_cache == null || _cache.Levels.Count == 0)
             {
                 //Create new playerData
                 _cache = new PlayerData()

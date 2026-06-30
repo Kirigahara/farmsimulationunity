@@ -49,14 +49,17 @@ namespace GameTemplate.Gameplay
         {
             //_ctx.TreeBehavior.FetchItem(OnFetched);
 
-            _ctx.ContructionBehavior.FetchFruit(
+            _ctx.ContructionBehavior.StartFetchFruit(
                 _ctx.ProductGroup, OnFetched);
             _ctx.PlayIdleCarry.Invoke();
         }
 
         public void Execute() { }
 
-        public void Exit() { }
+        public void Exit() 
+        {
+            Debug.Log("Exit Fetch");
+        }
 
         private void OnFetched(Transform[] items)
         {
@@ -83,21 +86,24 @@ namespace GameTemplate.Gameplay
 
         public void Enter()
         {
-            Vector3 destination = _ctx.GuestPosition.Invoke();
+            //Vector3 destination = _ctx.GuestPosition.Invoke();
             //_ctx.PathfindingService.FindPath(destination, OnReached);
 
             PathSmoother.FindPath(
                 _ctx.Coordinate.Invoke(),
                 _ctx.CurrentNode,
-                _ctx.FinishNode,
+                _ctx.CurrentGuest.Context.DockController.DeliveryPoint,
                 (path) => { _ctx.PathFollower.SetPath(path); });
         }
 
         public void Execute() 
         {
+            if (_ctx.PathFollower._PathExist == false) return;
+
             if (_ctx.PathFollower.IsFinished)
             {
-                _ctx.CurrentNode = _ctx.FinishNode;
+                _ctx.PathFollower.EmptyPath();
+                _ctx.CurrentNode = _ctx.CurrentGuest.Context.DockController.DeliveryPoint;
                 OnReached();
                 return;
             }
@@ -178,9 +184,12 @@ namespace GameTemplate.Gameplay
 
         public void Execute() 
         {
+            if (_ctx.PathFollower._PathExist == false) return;
+
             if (_ctx.PathFollower.IsFinished)
             {
-                _ctx.CurrentNode = _ctx.FinishNode;
+                _ctx.PathFollower.EmptyPath();
+                _ctx.CurrentNode = _ctx.ContructionBehavior.StandFarmer;
                 OnReached();
                 return;
             }
@@ -220,12 +229,13 @@ namespace GameTemplate.Gameplay
             //}
 
             _ctx.ResetTransform.Invoke();
+            _ctx.ResetSetup.Invoke();
 
             _ = _ctx.ContructionBehavior.CheckGuest(
                 () =>
                 {
                     // Không có khách → về WaitState chờ LevelController push
-                    _ctx.StateMachine.ChangeState(new WaitState(_ctx));
+                    //_ctx.StateMachine.ChangeState(new WaitState(_ctx));
                 });
         }
     }

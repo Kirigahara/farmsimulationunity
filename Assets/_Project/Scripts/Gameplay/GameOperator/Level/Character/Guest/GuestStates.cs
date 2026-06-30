@@ -1,6 +1,7 @@
 using GameTemplate.Core.Events;
 using GameTemplate.Core.Patterns.Async;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GameTemplate.Gameplay
@@ -17,18 +18,29 @@ namespace GameTemplate.Gameplay
 
         public void Enter()
         {
-            Vector3 destination = _ctx.CounterPosition.Invoke();
+            //Vector3 destination = _ctx.CounterPosition.Invoke();
             
             PathSmoother.FindPath(
                 _ctx.Coordinate.Invoke(),
                 _ctx.CurrentNode,
-                _ctx.FinishNode, (path) => { _ctx.PathFollower.SetPath(path); });
+                _ctx.FinishNode, (path) => 
+                {
+                    //for (int i = 0; i < path.Count - 1; i++)
+                    //{
+                    //    Debug.DrawLine(path[i], path[i + 1], Color.blue, 20.0f);
+                    //}
+
+                    _ctx.PathFollower.SetPath(path); 
+                });
         }
 
         public void Execute() 
         {
+            if (_ctx.PathFollower._PathExist == false) return;
+
             if (_ctx.PathFollower.IsFinished)
             {
+                _ctx.PathFollower.EmptyPath();
                 _ctx.CurrentNode = _ctx.FinishNode;
                 OnReached();
                 return;
@@ -79,10 +91,13 @@ namespace GameTemplate.Gameplay
         /// </summary>
         public void CompleteTransaction()
         {
+            GameplayManager.PlayerDataRuntime.UpGold(
+                GameplayManager.GetFruitSalePrice(_ctx.ItemToBuy.ProductID));
+
             _ctx.StateMachine.ChangeState(new MoveToDespawnState(_ctx));
         }
 
-        public async void MakeFetch(
+        public async Task MakeFetch(
             System.Collections.Generic.List<ProductionController> listFruit,
             Action FetchComplete)
         {
@@ -92,6 +107,7 @@ namespace GameTemplate.Gameplay
             {
                 listFruit[i].MoveSequence(_ctx.ProductGroup.GetChild(i));
                 await AsyncOp.Delay(GameConfig.ProductGetTime);
+                _ctx.Productions.Add(listFruit[i]);
             }
 
             await AsyncOp.Delay(GameConfig.ProductMoveTime);
@@ -112,7 +128,9 @@ namespace GameTemplate.Gameplay
 
         public void Enter()
         {
-            Vector3 destination = _ctx.DespawnPosition.Invoke();
+            //Vector3 destination = _ctx.DespawnPosition.Invoke();
+
+            _ctx.DockController.EmptyGuest();
 
             PathSmoother.FindPath(
                 _ctx.Coordinate.Invoke(),
@@ -123,9 +141,12 @@ namespace GameTemplate.Gameplay
 
         public void Execute() 
         {
+            if (_ctx.PathFollower._PathExist == false) return;
+
             if (_ctx.PathFollower.IsFinished)
             {
-                _ctx.CurrentNode = _ctx.FinishNode;
+                _ctx.PathFollower.EmptyPath();
+                _ctx.CurrentNode = null;
                 OnReached();
                 return;
             }
@@ -163,9 +184,8 @@ namespace GameTemplate.Gameplay
             // Nếu cần thông báo ra ngoài thì publish EventBus ở đây
             // EventBus.Publish(new GuestDespawnedEvent { Item = _ctx.ItemToBuy });
 
-            EventBus.Publish(new GuestExit());
-
             _ctx.PlayIdle.Invoke();
+            _ctx.DeSpawn.Invoke();
         }
 
         public void Execute() { }

@@ -19,5 +19,9 @@ namespace GameTemplate.Gameplay
         {
             _CurrentGuest = guest;
         }
+        public void EmptyGuest()
+        {
+            _CurrentGuest = null;
+        }
     }
 }

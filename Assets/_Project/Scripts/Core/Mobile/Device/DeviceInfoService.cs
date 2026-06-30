@@ -1,5 +1,6 @@
 using UnityEngine;
 using GameTemplate.Core.Logger;
+using GameTemplate.Core.Data;
 
 namespace GameTemplate.Core.Mobile.Device
 {
@@ -91,6 +92,8 @@ namespace GameTemplate.Core.Mobile.Device
                     QualitySettings.particleRaycastBudget = 16;
                     QualitySettings.skinWeights = SkinWeights.TwoBones;
                     QualitySettings.vSyncCount = 0;
+
+                    DataManager._ReduceGrassOnQuality = 0.3f;
                     break;
 
                 case DeviceTier.Mid:
@@ -105,6 +108,8 @@ namespace GameTemplate.Core.Mobile.Device
                     QualitySettings.particleRaycastBudget = 64;
                     QualitySettings.skinWeights = SkinWeights.FourBones;
                     QualitySettings.vSyncCount = 0;
+
+                    DataManager._ReduceGrassOnQuality = 0.6f;
                     break;
 
                 case DeviceTier.High:
@@ -119,6 +124,8 @@ namespace GameTemplate.Core.Mobile.Device
                     QualitySettings.particleRaycastBudget = 256;
                     QualitySettings.skinWeights = SkinWeights.FourBones;
                     QualitySettings.vSyncCount = 0;
+
+                    DataManager._ReduceGrassOnQuality = 1.0f;
                     break;
             }
             GameLog.Info(LogCategory.Bootstrap, $"Applied quality settings for tier: {Tier}");

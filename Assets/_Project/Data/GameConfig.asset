@@ -17,3 +17,9 @@ MonoBehaviour:
   _LevelConfigs:
   - {fileID: 11400000, guid: 0ecc2ce48d0ee0c4f97baf1c3d507ce1, type: 2}
   - {fileID: 11400000, guid: 0ecc2ce48d0ee0c4f97baf1c3d507ce1, type: 2}
+  _DelayStartGameplay: 0.5
+  _DelaySpawnGuest: 0.5
+  _ProductGrowDelay: 0.2
+  _ProductGetTime: 0.2
+  _ProductMoveTime: 0.5
+  _ConstructionToPopup: 4

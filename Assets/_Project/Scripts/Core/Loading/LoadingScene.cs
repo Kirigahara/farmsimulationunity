@@ -5,7 +5,6 @@ using GameTemplate.Core.SceneManagement;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Unity.Android.Gradle;
 using UnityEngine;
 using UnityEngine.UI;
 

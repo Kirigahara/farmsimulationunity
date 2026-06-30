@@ -15,6 +15,8 @@ namespace GameTemplate.Gameplay
         public Func<Vector3> TreePosition;
         public Func<Vector3> GuestPosition;
 
+        public Action ResetSetup;
+
         // ── Data runtime riêng ────────────────────────────────────────────
         public GuestBehavior CurrentGuest { get; set; }
         public Transform[] FetchedItems { get; set; }

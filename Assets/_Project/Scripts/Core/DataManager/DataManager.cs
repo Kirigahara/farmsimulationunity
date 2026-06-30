@@ -22,6 +22,8 @@ namespace GameTemplate.Core.Data
         private ISaveService _saveService;
         public bool IsReady { get; private set; }
 
+        public static float _ReduceGrassOnQuality = 1.0f;
+
         private void Awake()
         {
             _saveService = ServiceLocator.Get<ISaveService>();

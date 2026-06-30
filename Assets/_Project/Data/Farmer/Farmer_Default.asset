@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Farmer_Default
   m_EditorClassIdentifier: Assembly-CSharp::FarmerData
   Id: 
-  _MoveSpeed: 0
+  _MoveSpeed: 2
   _SpecialBuff: 0
   _FarmerPrefab: {fileID: 0}

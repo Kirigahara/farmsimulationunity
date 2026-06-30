@@ -2,7 +2,8 @@
     "name": "GameTemplate.Gameplay",
     "rootNamespace": "GameTemplate.Gameplay",
     "references": [
-        "GameTemplate.Core"
+        "GameTemplate.Core",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -14,6 +14,8 @@ namespace GameTemplate.Gameplay
         public ContructionController ItemToBuy { get; set; }
 
         // ─────────────────────────────────────────────────────────────────
+        public DockController DockController { get; set; }
+
         public GuestContext(PathFollower pathFollower, CharacterStateMachine stateMachine)
             : base(pathFollower, stateMachine) { }
     }
