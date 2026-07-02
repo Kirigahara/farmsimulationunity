@@ -1,3 +1,4 @@
+using BreakEternity;
 using System;
 using TMPro;
 using UnityEngine;
@@ -57,7 +58,7 @@ namespace GameTemplate.Gameplay
 
                         int value = config.Value;
                         _Txt_Decs.text = _Context.GetDescription(value);
-                        _Txt_Price.text = BigNumber.FromRaw(config.Cost).ToString();
+                        _Txt_Price.text = BigDouble.fromDouble(config.Cost).ToString();
 
                         _ImgIcon.sprite = SpriteConfig.Icon_GlobalProfit;
 
@@ -65,8 +66,8 @@ namespace GameTemplate.Gameplay
                         _TxtMax.gameObject.SetActive(isMax);
 
                         _Txt_Price.color =
-                            GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(
-                                BigNumber.FromRaw(config.Cost)) ? Color.white : Color.red;
+                            GameplayManager.PlayerDataService.PlayerData._Gold>=(
+                                (config.Cost)) ? Color.white : Color.red;
 
                         break;
                     }
@@ -80,7 +81,7 @@ namespace GameTemplate.Gameplay
 
                         int value = config.Value;
                         _Txt_Decs.text = _Context.GetDescription(value);
-                        _Txt_Price.text = BigNumber.FromRaw(config.Cost).ToString();
+                        _Txt_Price.text = BigDouble.fromDouble(config.Cost).ToString();
 
                         _ImgIcon.sprite = SpriteConfig.Icon_GuestAmount;
 
@@ -88,8 +89,8 @@ namespace GameTemplate.Gameplay
                         _TxtMax.gameObject.SetActive(isMax);
 
                         _Txt_Price.color =
-                            GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(
-                                BigNumber.FromRaw(config.Cost)) ? Color.white : Color.red;
+                            GameplayManager.PlayerDataService.PlayerData._Gold>=(
+                                (config.Cost)) ? Color.white : Color.red;
 
                         break;
                     }
@@ -104,7 +105,7 @@ namespace GameTemplate.Gameplay
 
                         int value = config.Value;
                         _Txt_Decs.text = _Context.GetDescription(value);
-                        _Txt_Price.text = BigNumber.FromRaw(config.Cost).ToString();
+                        _Txt_Price.text = BigDouble.fromDouble(config.Cost).ToString();
 
                         _ImgIcon.sprite = SpriteConfig.GetProductIcon(pconfig.PlantType);
 
@@ -112,8 +113,8 @@ namespace GameTemplate.Gameplay
                         _TxtMax.gameObject.SetActive(isMax);
 
                         _Txt_Price.color =
-                            GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(
-                                BigNumber.FromRaw(config.Cost)) ? Color.white : Color.red;
+                            GameplayManager.PlayerDataService.PlayerData._Gold>=(
+                                (config.Cost)) ? Color.white : Color.red;
                         break;
                     }
             }

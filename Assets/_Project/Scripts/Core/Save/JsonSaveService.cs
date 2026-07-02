@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using GameTemplate.Core.Logger;
@@ -28,6 +30,14 @@ namespace GameTemplate.Core.Save
         private readonly string _baseDir;
         private const string FileExtension = ".json";
 
+        // ===== Mã hóa =====
+        // Lưu ý: key/IV nhúng cứng trong build chỉ chặn được user sửa tay file save
+        // bằng notepad/text editor. Không chống được người có kỹ năng reverse-engineer
+        // app để lấy key. Nếu cần chống cheat nghiêm túc (leaderboard, PvP...), phải
+        // validate ở server, không tin dữ liệu client.
+        private const string EncryptionPassphrase = ",x%Bkh]&,5LYWEK.";//Key được gán 1 lần duy nhất, sẽ không được đổi khi build các version tiếp theo
+        private static readonly byte[] Salt = Encoding.UTF8.GetBytes("GameTemplate.Core.Save.Salt");
+
         public JsonSaveService()
         {
             _baseDir = Path.Combine(Application.persistentDataPath, "Saves");
@@ -36,6 +46,39 @@ namespace GameTemplate.Core.Save
         }
 
         private string GetPath(string key) => Path.Combine(_baseDir, key + FileExtension);
+
+        private static (byte[] key, byte[] iv) DeriveKeyIv()
+        {
+            using var deriveBytes = new Rfc2898DeriveBytes(
+                EncryptionPassphrase, Salt, 10000, HashAlgorithmName.SHA256);
+            byte[] key = deriveBytes.GetBytes(32); // AES-256
+            byte[] iv = deriveBytes.GetBytes(16);
+            return (key, iv);
+        }
+
+        private static string Encrypt(string plainText)
+        {
+            var (key, iv) = DeriveKeyIv();
+            using var aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = iv;
+            using var encryptor = aes.CreateEncryptor();
+            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+            byte[] cipherBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
+            return Convert.ToBase64String(cipherBytes);
+        }
+
+        private static string Decrypt(string cipherTextBase64)
+        {
+            var (key, iv) = DeriveKeyIv();
+            using var aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = iv;
+            using var decryptor = aes.CreateDecryptor();
+            byte[] cipherBytes = Convert.FromBase64String(cipherTextBase64);
+            byte[] plainBytes = decryptor.TransformFinalBlock(cipherBytes, 0, cipherBytes.Length);
+            return Encoding.UTF8.GetString(plainBytes);
+        }
 
         public async Task<T> LoadAsync<T>(string key) where T : class, new()
         {
@@ -48,7 +91,18 @@ namespace GameTemplate.Core.Save
 
             try
             {
-                string json = await Task.Run(() => File.ReadAllText(path));
+                string raw = await Task.Run(() => File.ReadAllText(path));
+                string json;
+                try
+                {
+                    json = Decrypt(raw);
+                }
+                catch (Exception decryptEx)
+                {
+                    // Có thể là save cũ chưa mã hóa (từ bản build trước) — fallback đọc thẳng JSON.
+                    GameLog.Warning(LogCategory.Save, $"Decrypt '{key}' failed ({decryptEx.Message}), thử đọc như JSON thường.");
+                    json = raw;
+                }
                 var data = JsonUtility.FromJson<T>(json);
                 if (data == null)
                 {
@@ -74,14 +128,15 @@ namespace GameTemplate.Core.Save
             try
             {
                 string json = JsonUtility.ToJson(data, prettyPrint: false);
+                string encrypted = Encrypt(json);
                 // Atomic write: tránh corrupt khi user kill app giữa chừng
                 await Task.Run(() =>
                 {
-                    File.WriteAllText(tempPath, json);
+                    File.WriteAllText(tempPath, encrypted);
                     if (File.Exists(path)) File.Delete(path);
                     File.Move(tempPath, path);
                 });
-                GameLog.Info(LogCategory.Save, $"Saved '{key}' ({json.Length} bytes).");
+                GameLog.Info(LogCategory.Save, $"Saved '{key}' ({json.Length} bytes, encrypted).");
             }
             catch (Exception ex)
             {

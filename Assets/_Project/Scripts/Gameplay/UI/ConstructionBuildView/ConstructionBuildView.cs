@@ -1,3 +1,4 @@
+using BreakEternity;
 using GameTemplate.Core.Events;
 using System;
 using TMPro;
@@ -20,7 +21,7 @@ namespace GameTemplate.Gameplay
         [SerializeField] protected TextMeshProUGUI _TxtName;
         [SerializeField] protected TextMeshProUGUI _TxtPrice;
 
-        protected BigNumber _Price;
+        protected BigDouble _Price;
         protected Action _ActionUnlock;
 
         protected virtual void Awake()
@@ -54,11 +55,11 @@ namespace GameTemplate.Gameplay
         public void SetUp(SetupUnlockPopup e)
         {
             _TxtName.text = e._ProductName;
-            _Price = BigNumber.FromRaw(e._Price);
+            _Price = BigDouble.fromDouble(e._Price);
             _TxtPrice.text = _Price.ToString();
-            _TxtPrice.color = 
-                GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(_Price)?
-                Color.white: Color.red;
+            _TxtPrice.color =
+                GameplayManager.PlayerDataService.PlayerData._Gold >= (_Price) ?
+                Color.white : Color.red;
             _ActionUnlock = e.ActionTriggerBtnUnlock;
 
             this.transform.position = e._ConstructionPosition + Vector3.up * GameConfig.ConstructionToPopup;

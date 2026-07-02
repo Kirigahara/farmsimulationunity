@@ -161,7 +161,7 @@ namespace GameTemplate.Gameplay
 
             if (isMax) return;
 
-            if (GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(BigNumber.FromRaw(cost)))
+            if (GameplayManager.PlayerDataService.PlayerData._Gold >= (cost))
             {
                 if (SaveData.PlantLevel == 0)
                 {
@@ -179,7 +179,7 @@ namespace GameTemplate.Gameplay
                     EventBus.Publish(new OnUpgradeSequence
                     {
                         _UpgradeTime = _Data.UpgradeTime,
-                        _CompleteUpgrade = () => 
+                        _CompleteUpgrade = () =>
                         {
                             SaveData.PlantLevel++;
                             EventBus.Publish(new HideUpgradePopup());

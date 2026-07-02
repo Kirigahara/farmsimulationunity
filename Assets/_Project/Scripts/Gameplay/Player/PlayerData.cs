@@ -1,3 +1,4 @@
+using BreakEternity;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -107,7 +108,7 @@ namespace GameTemplate.Gameplay
     public class PlayerData
     {
         public int _Gem;
-        public BigNumber _Gold;
+        public BigDouble _Gold;
         public int _Level;  // màn hiện tại của người chơi
 
         /// <summary>

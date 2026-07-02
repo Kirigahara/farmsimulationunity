@@ -1,3 +1,4 @@
+using BreakEternity;
 using GameTemplate.Core.Events;
 using GameTemplate.Core.Patterns.Async;
 using GameTemplate.Core.UI.Buttons;
@@ -70,14 +71,14 @@ namespace GameTemplate.Gameplay
             _TxtLevel.text = $"Level {e._Level:D}";
             _TxtName.text = e._ProductName;
 
-            _TxtSalePrice.text = BigNumber.FromRaw(e._SalePrice).ToString();
+            _TxtSalePrice.text = BigDouble.fromDouble(e._SalePrice).ToString();
 
             _TxtUpgradeTime.text = $"{e._UpdateTime:F} s";
 
-            _Price = BigNumber.FromRaw(e._Price);
+            _Price = BigDouble.fromDouble(e._Price);
             _TxtPrice.text = _Price.ToString();
             _TxtPrice.color =
-                GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(_Price) ?
+                GameplayManager.PlayerDataService.PlayerData._Gold >= (_Price) ?
                 Color.white : Color.red;
 
             _ActionUnlock = e.ActionTriggerBtnLevelUp;

@@ -1,3 +1,4 @@
+using BreakEternity;
 using GameTemplate.Core.DI;
 using GameTemplate.Core.Patterns.Singleton;
 using TMPro;
@@ -101,7 +102,7 @@ namespace GameTemplate.Gameplay
                 });
         }
 
-        public static BigNumber GetFruitSalePrice(string id)
+        public static BigDouble GetFruitSalePrice(string id)
         {
             int level_g = GameplayManager.CurrentLevelSaveData.GlobalPlantUpgradeLevel;
             UpgradeLevelConfig config_g;
@@ -123,13 +124,13 @@ namespace GameTemplate.Gameplay
             double Price;
             (_, Price, _) = config_p.GetLevelConfig(level_p);
 
-            return BigNumber.FromRaw(Price * value * value_g);
+            return BigDouble.fromDouble(Price * value * value_g);
         }
 
         [ContextMenu(nameof(Hack100000Gold))]
         public void Hack100000Gold()
         {
-            PlayerDataRuntime.UpGold(BigNumber.FromRaw(100000));
+            PlayerDataRuntime.UpGold(BigDouble.fromDouble(100000));
         }
     }
 }

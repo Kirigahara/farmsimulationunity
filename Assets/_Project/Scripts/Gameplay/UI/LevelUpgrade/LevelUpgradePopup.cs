@@ -1,3 +1,4 @@
+using BreakEternity;
 using GameTemplate.Core.Events;
 using GameTemplate.Core.Patterns.Async;
 using UnityEngine;
@@ -30,11 +31,10 @@ namespace GameTemplate.Gameplay
                     GameConfig.CurrentLevelConfig.PlantUpgrades[i],
                     () =>
                     {
-                        if (!GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(
-                            BigNumber.FromRaw(cost)))
+                        if (!(GameplayManager.PlayerDataService.PlayerData._Gold>=cost))
                             return;
 
-                        GameplayManager.PlayerDataRuntime.DownGold(BigNumber.FromRaw(cost));
+                        GameplayManager.PlayerDataRuntime.DownGold(BigDouble.fromDouble(cost));
 
                         level++;
                         GameplayManager.CurrentLevelSaveData.SetPlantUpgradeLevel(id, level);
@@ -52,11 +52,10 @@ namespace GameTemplate.Gameplay
                 GameConfig.CurrentLevelConfig.GlobalPlantUpgrade,
                 () =>
                 {
-                    if (!GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(
-                            BigNumber.FromRaw(cost_Gp)))
+                    if (!(GameplayManager.PlayerDataService.PlayerData._Gold>=cost_Gp))
                         return;
 
-                    GameplayManager.PlayerDataRuntime.DownGold(BigNumber.FromRaw(cost_Gp));
+                    GameplayManager.PlayerDataRuntime.DownGold(BigDouble.fromDouble(cost_Gp));
                     GameplayManager.CurrentLevelSaveData.GlobalPlantUpgradeLevel++;
                 });
 
@@ -72,11 +71,10 @@ namespace GameTemplate.Gameplay
                 GameConfig.CurrentLevelConfig.CustomerUpgrade,
                 () =>
                 {
-                    if (!GameplayManager.PlayerDataService.PlayerData._Gold.CanAfford(
-                            BigNumber.FromRaw(cost_Guest)))
+                    if (!(GameplayManager.PlayerDataService.PlayerData._Gold >= cost_Guest))
                         return;
 
-                    GameplayManager.PlayerDataRuntime.DownGold(BigNumber.FromRaw(cost_Guest));
+                    GameplayManager.PlayerDataRuntime.DownGold(BigDouble.fromDouble(cost_Guest));
                     GameplayManager.CurrentLevelSaveData.CustomerUpgradeLevel++;
 
                     EventBus.Publish(new EventOpenGuest());
